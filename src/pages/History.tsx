@@ -354,7 +354,6 @@ const History = () => {
                           >
                             {event.type === "topup" ? `+${formatVND(event.amount)}` : `-${formatVND(event.amount)}`}
                           </span>
-                          </span>
                         </div>
                       ))}
                     </div>
