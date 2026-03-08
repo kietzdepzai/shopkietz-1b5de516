@@ -34,7 +34,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4 text-secondary" />
-                <span>Fanpage: ShopKietZ Official</span>
+                <span>Facebook: <a href="https://www.facebook.com/ank.kiet.2604" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">ShopKietZ Official</a></span>
               </div>
               <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4 text-neon-orange" />
