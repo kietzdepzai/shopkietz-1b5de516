@@ -314,7 +314,7 @@ const History = () => {
                       <ArrowUpRight className="w-6 h-6 text-accent" />
                     </div>
                     <p className="text-xs text-muted-foreground mb-1">Tổng chi tiêu</p>
-                    <p className="font-display text-xl font-bold text-accent">{formatVND(0)}</p>
+                    <p className="font-display text-xl font-bold text-accent">{formatVND(totalSpent)}</p>
                   </div>
                 </div>
 
