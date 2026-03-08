@@ -84,6 +84,7 @@ const AdminTopups = () => {
             <thead>
               <tr className="border-b border-border bg-muted/50">
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Phương thức</th>
+                <th className="text-left px-4 py-3 font-semibold text-foreground">Chi tiết thẻ</th>
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Số tiền</th>
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Trạng thái</th>
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Thời gian</th>
