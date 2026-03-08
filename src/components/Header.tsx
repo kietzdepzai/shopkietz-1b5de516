@@ -1,9 +1,21 @@
-import { Search, ShoppingCart, User, Gamepad2 } from "lucide-react";
-import { useState } from "react";
+import { Search, ShoppingCart, User, Gamepad2, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const historyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (historyRef.current && !historyRef.current.contains(e.target as Node)) {
+        setHistoryOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   return (
     <header className="bg-card border-b border-border sticky top-0 z-50">
@@ -56,19 +68,44 @@ const Header = () => {
             { name: "Sản phẩm", href: "/#products" },
             { name: "Nạp tiền", href: "/nap-tien" },
             { name: "Đơn hàng", href: "#" },
-            { name: "Lịch sử", href: "/lich-su" },
-          ].map((item, i) => (
-            <a
-              key={item.name}
-              href={item.href}
-              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-                i === 0
-                  ? "gradient-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              }`}
-            >
-              {item.name}
-            </a>
+            { name: "Lịch sử", href: "#", dropdown: true },
+          ].map((item: any, i: number) => (
+            item.dropdown ? (
+              <div key={item.name} className="relative" ref={historyRef}>
+                <button
+                  onClick={() => setHistoryOpen(!historyOpen)}
+                  className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-muted-foreground hover:text-foreground hover:bg-muted"
+                >
+                  {item.name}
+                  <ChevronDown className={`w-3 h-3 transition-transform ${historyOpen ? "rotate-180" : ""}`} />
+                </button>
+                {historyOpen && (
+                  <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[180px] z-50">
+                    <a href="/lich-su?tab=purchases" onClick={() => setHistoryOpen(false)} className="block px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
+                      Lịch sử đơn hàng
+                    </a>
+                    <a href="/lich-su?tab=topups" onClick={() => setHistoryOpen(false)} className="block px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
+                      Nhật ký hoạt động
+                    </a>
+                    <a href="/lich-su?tab=balance" onClick={() => setHistoryOpen(false)} className="block px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
+                      Biến động số dư
+                    </a>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <a
+                key={item.name}
+                href={item.href}
+                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                  i === 0
+                    ? "gradient-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
+              >
+                {item.name}
+              </a>
+            )
           ))}
         </nav>
       </div>
