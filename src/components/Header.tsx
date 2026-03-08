@@ -24,7 +24,7 @@ const Header = () => {
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2 shrink-0">
-            <Gamepad2 className="w-8 h-8 text-primary neon-text animate-pulse-neon" />
+            <Gamepad2 className="w-8 h-8 text-primary neon-text animate-spin-slow" />
             <AnimatedLogo />
           </a>
 

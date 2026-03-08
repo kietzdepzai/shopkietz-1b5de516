@@ -27,7 +27,7 @@ const AnimatedLogo = () => {
 
   return (
     <h1 className="font-display text-xl md:text-2xl font-bold tracking-wider select-none relative">
-      <span className="logo-glitch neon-text text-primary" data-text={displayed}>
+      <span className="neon-text text-primary">
         {displayed}
       </span>
       <span
