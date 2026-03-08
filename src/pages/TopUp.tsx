@@ -188,12 +188,12 @@ const TopUp = () => {
             {/* Bank accounts */}
             {/* E-wallets - moved up */}
             <div className="bg-card border border-border rounded-xl p-6 neon-card space-y-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 justify-center">
                 <Smartphone className="w-6 h-6 text-neon-cyan" />
                 <h2 className="font-display text-lg font-bold text-secondary neon-cyan-text">VÍ ĐIỆN TỬ</h2>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-3">
+              <div className="flex flex-col items-center gap-3">
                 {eWallets.map((w: any) => (
                   <div key={w.name} className="bg-muted border border-border rounded-lg p-4 text-center">
                     <p className="font-bold text-foreground mb-1">{w.name}</p>
