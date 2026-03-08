@@ -7,9 +7,19 @@ import { History as HistoryIcon, ShoppingBag, Wallet, BarChart3, Clock, ArrowUpR
 
 type Tab = "purchases" | "topups" | "balance";
 
-const mockPurchases: { id: number; product: string; price: number; date: string; status: string }[] = [];
+const mockPurchases = [
+  { id: 1, product: "ACC Blox Fruits Lv.2450", price: 150000, date: "2026-03-08 14:30", status: "success" },
+  { id: 2, product: "ACC Blox Fruits Lv.2000", price: 80000, date: "2026-03-07 10:15", status: "success" },
+  { id: 3, product: "ACC King Legacy Lv.500", price: 50000, date: "2026-03-06 09:00", status: "pending" },
+  { id: 4, product: "Gamepass Blox Fruits", price: 200000, date: "2026-03-05 16:45", status: "success" },
+];
 
-const mockTopups: { id: number; method: string; amount: number; received: number; date: string; status: string }[] = [];
+const mockTopups = [
+  { id: 1, method: "ZaloPay", amount: 100000, received: 100000, date: "2026-03-08 13:00", status: "success" },
+  { id: 2, method: "Thẻ Viettel", amount: 50000, received: 40000, date: "2026-03-07 08:30", status: "success" },
+  { id: 3, method: "ATM Vietcombank", amount: 200000, received: 200000, date: "2026-03-06 11:20", status: "success" },
+  { id: 4, method: "Thẻ Mobifone", amount: 100000, received: 80000, date: "2026-03-05 15:10", status: "failed" },
+];
 
 const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
 

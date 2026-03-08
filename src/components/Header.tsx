@@ -22,12 +22,12 @@ const Header = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2 shrink-0 group">
-            <Gamepad2 className="w-8 h-8 text-primary neon-text transition-transform duration-500 group-hover:rotate-[360deg] group-hover:scale-110 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]" />
-            <h1 className="font-display text-xl md:text-2xl font-bold text-primary neon-text tracking-wider transition-all duration-300 group-hover:tracking-[0.15em] group-hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.6)]">
+          <div className="flex items-center gap-2 shrink-0">
+            <Gamepad2 className="w-8 h-8 text-primary neon-text" />
+            <h1 className="font-display text-xl md:text-2xl font-bold text-primary neon-text tracking-wider">
               ShopKietZ
             </h1>
-          </a>
+          </div>
 
           {/* Search */}
           <div className="flex-1 max-w-xl hidden md:block">
