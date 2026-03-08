@@ -12,8 +12,8 @@ const banks = [
 ];
 
 const eWallets = [
+  { name: "ZaloPay", number: "0987672604", holder: "VO ANH KIET", hasQR: true },
   { name: "Momo", number: "", holder: "" },
-  { name: "ZaloPay", number: "0987672604", holder: "NGUYEN VAN KIETZ" },
 ];
 
 const cardTypes = [
