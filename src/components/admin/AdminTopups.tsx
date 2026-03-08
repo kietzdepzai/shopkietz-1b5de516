@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
 
 type TopupRequest = {
   id: string;
@@ -15,8 +16,10 @@ type TopupRequest = {
 
 const AdminTopups = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [requests, setRequests] = useState<TopupRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
 
   const fetchRequests = async () => {
@@ -31,13 +34,18 @@ const AdminTopups = () => {
   useEffect(() => { fetchRequests(); }, [filter]);
 
   const handleAction = async (id: string, userId: string, amount: number, action: "approved" | "rejected") => {
+    setActionLoading(id);
     await supabase.from("topup_requests").update({ status: action, reviewed_by: user?.id }).eq("id", id);
     if (action === "approved") {
       const { data: profile } = await supabase.from("profiles").select("balance").eq("user_id", userId).single();
       if (profile) {
         await supabase.from("profiles").update({ balance: profile.balance + amount }).eq("user_id", userId);
       }
+      toast({ title: "✅ Thẻ đúng — Đã cộng tiền", description: `Đã cộng ${formatVND(amount)} vào tài khoản người dùng.` });
+    } else {
+      toast({ title: "❌ Thẻ sai — Đã từ chối", description: `Yêu cầu nạp ${formatVND(amount)} đã bị từ chối.`, variant: "destructive" });
     }
+    setActionLoading(null);
     fetchRequests();
   };
 
@@ -76,6 +84,7 @@ const AdminTopups = () => {
             <thead>
               <tr className="border-b border-border bg-muted/50">
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Phương thức</th>
+                <th className="text-left px-4 py-3 font-semibold text-foreground">Chi tiết thẻ</th>
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Số tiền</th>
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Trạng thái</th>
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Thời gian</th>
@@ -84,30 +93,49 @@ const AdminTopups = () => {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">Đang tải...</td></tr>
+                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">Đang tải...</td></tr>
               ) : requests.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">Không có yêu cầu</td></tr>
+                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">Không có yêu cầu</td></tr>
               ) : (
                 requests.map((r) => (
-                  <tr key={r.id} className="border-b border-border hover:bg-muted/30 transition-colors">
+                  <tr key={r.id} className={`border-b border-border hover:bg-muted/30 transition-colors ${r.status === "approved" ? "bg-primary/5" : r.status === "rejected" ? "bg-destructive/5" : ""}`}>
                     <td className="px-4 py-3 text-foreground">{r.method}</td>
+                    <td className="px-4 py-3">
+                      {r.note ? (
+                        <div className="text-xs text-muted-foreground font-mono space-y-0.5">
+                          {r.note.split(" | ").map((part, i) => (
+                            <div key={i}>{part}</div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-primary font-mono font-bold">{formatVND(r.amount)}</td>
-                    <td className="px-4 py-3">{statusBadge(r.status)}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{new Date(r.created_at).toLocaleString("vi-VN")}</td>
+                    <td className="px-4 py-3">
+                      {statusBadge(r.status)}
+                      {r.status === "approved" && <p className="text-[10px] text-primary mt-0.5">Đã cộng tiền ✓</p>}
+                      {r.status === "rejected" && <p className="text-[10px] text-destructive mt-0.5">Thẻ sai ✗</p>}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(r.created_at).toLocaleString("vi-VN")}</td>
                     <td className="px-4 py-3 text-right">
                       {r.status === "pending" && (
                         <div className="flex items-center justify-end gap-2">
                           <button
+                            disabled={actionLoading === r.id}
                             onClick={() => handleAction(r.id, r.user_id, r.amount, "approved")}
-                            className="px-3 py-1.5 text-xs font-semibold gradient-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
+                            className="px-3 py-1.5 text-xs font-semibold gradient-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-1"
                           >
-                            Duyệt
+                            {actionLoading === r.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
+                            Thẻ đúng
                           </button>
                           <button
+                            disabled={actionLoading === r.id}
                             onClick={() => handleAction(r.id, r.user_id, r.amount, "rejected")}
-                            className="px-3 py-1.5 text-xs font-semibold bg-destructive text-destructive-foreground rounded-md hover:opacity-90 transition-opacity"
+                            className="px-3 py-1.5 text-xs font-semibold bg-destructive text-destructive-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-1"
                           >
-                            Từ chối
+                            {actionLoading === r.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
+                            Thẻ sai
                           </button>
                         </div>
                       )}
