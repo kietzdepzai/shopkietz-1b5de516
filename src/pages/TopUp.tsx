@@ -14,9 +14,9 @@ const eWallets = [
 ];
 
 const cardTypes = [
-  { id: "viettel", name: "Viettel", color: "text-red-400" },
-  { id: "vinaphone", name: "Vinaphone", color: "text-blue-400" },
-  { id: "mobifone", name: "Mobifone", color: "text-green-400" },
+  { id: "viettel", name: "Viettel", color: "text-red-400", serialLengths: [11, 14], codeLengths: [13, 15], serialHint: "11 hoặc 14 số", codeHint: "13 hoặc 15 số" },
+  { id: "vinaphone", name: "Vinaphone", color: "text-blue-400", serialLengths: [14], codeLengths: [12, 14], serialHint: "14 số", codeHint: "12 hoặc 14 số" },
+  { id: "mobifone", name: "Mobifone", color: "text-green-400", serialLengths: [15], codeLengths: [12], serialHint: "15 số", codeHint: "12 số" },
 ];
 
 const denominations = [10000, 20000, 50000, 100000, 200000, 500000];
@@ -28,11 +28,40 @@ const TopUp = () => {
   const [serial, setSerial] = useState("");
   const [code, setCode] = useState("");
   const [copiedField, setCopiedField] = useState("");
+  const [errors, setErrors] = useState<{ serial?: string; code?: string }>({});
+
+  const currentCard = cardTypes.find((c) => c.id === selectedCard)!;
 
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
     setCopiedField(field);
     setTimeout(() => setCopiedField(""), 2000);
+  };
+
+  const validateCard = () => {
+    const newErrors: { serial?: string; code?: string } = {};
+    const serialDigits = serial.replace(/\D/g, "");
+    const codeDigits = code.replace(/\D/g, "");
+
+    if (!serialDigits) {
+      newErrors.serial = "Vui lòng nhập số Seri";
+    } else if (!currentCard.serialLengths.includes(serialDigits.length)) {
+      newErrors.serial = `Số Seri ${currentCard.name} phải có ${currentCard.serialHint}`;
+    }
+
+    if (!codeDigits) {
+      newErrors.code = "Vui lòng nhập mã thẻ";
+    } else if (!currentCard.codeLengths.includes(codeDigits.length)) {
+      newErrors.code = `Mã thẻ ${currentCard.name} phải có ${currentCard.codeHint}`;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (!validateCard()) return;
+    // TODO: submit topup request
   };
 
   const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
@@ -97,7 +126,7 @@ const TopUp = () => {
                 {cardTypes.map((ct) => (
                   <button
                     key={ct.id}
-                    onClick={() => setSelectedCard(ct.id)}
+                    onClick={() => { setSelectedCard(ct.id); setSerial(""); setCode(""); setErrors({}); }}
                     className={`flex-1 py-3 rounded-lg font-semibold text-sm border transition-all ${
                       selectedCard === ct.id
                         ? "border-primary bg-primary/10 text-primary neon-border"
@@ -133,24 +162,30 @@ const TopUp = () => {
             {/* Serial & Code */}
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">Số Seri</label>
+                <label className="text-sm font-medium text-foreground mb-1 block">Số Seri</label>
+                <p className="text-xs text-muted-foreground mb-2">{currentCard.name}: {currentCard.serialHint}</p>
                 <input
                   type="text"
                   value={serial}
-                  onChange={(e) => setSerial(e.target.value)}
-                  placeholder="Nhập số Seri..."
-                  className="w-full bg-muted border border-border rounded-lg py-3 px-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:neon-border transition-all"
+                  onChange={(e) => { setSerial(e.target.value.replace(/\D/g, "")); setErrors((prev) => ({ ...prev, serial: undefined })); }}
+                  placeholder={`Nhập số Seri (${currentCard.serialHint})...`}
+                  maxLength={Math.max(...currentCard.serialLengths)}
+                  className={`w-full bg-muted border rounded-lg py-3 px-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:neon-border transition-all ${errors.serial ? "border-destructive" : "border-border"}`}
                 />
+                {errors.serial && <p className="text-xs text-destructive mt-1">{errors.serial}</p>}
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">Mã thẻ</label>
+                <label className="text-sm font-medium text-foreground mb-1 block">Mã thẻ</label>
+                <p className="text-xs text-muted-foreground mb-2">{currentCard.name}: {currentCard.codeHint}</p>
                 <input
                   type="text"
                   value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="Nhập mã thẻ..."
-                  className="w-full bg-muted border border-border rounded-lg py-3 px-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:neon-border transition-all"
+                  onChange={(e) => { setCode(e.target.value.replace(/\D/g, "")); setErrors((prev) => ({ ...prev, code: undefined })); }}
+                  placeholder={`Nhập mã thẻ (${currentCard.codeHint})...`}
+                  maxLength={Math.max(...currentCard.codeLengths)}
+                  className={`w-full bg-muted border rounded-lg py-3 px-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:neon-border transition-all ${errors.code ? "border-destructive" : "border-border"}`}
                 />
+                {errors.code && <p className="text-xs text-destructive mt-1">{errors.code}</p>}
               </div>
             </div>
 
@@ -169,7 +204,7 @@ const TopUp = () => {
             </div>
 
             {/* Submit */}
-            <button className="w-full py-3.5 gradient-primary text-primary-foreground font-bold rounded-lg text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+            <button onClick={handleSubmit} className="w-full py-3.5 gradient-primary text-primary-foreground font-bold rounded-lg text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
               <CreditCard className="w-4 h-4" />
               Nạp thẻ — Thực nhận {formatVND(selectedDenom * 0.8)}
               <ArrowRight className="w-4 h-4" />
