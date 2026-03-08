@@ -13,7 +13,6 @@ const banks = [
 
 const eWallets = [
   { name: "ZaloPay", number: "0987672604", holder: "VO ANH KIET", hasQR: true },
-  { name: "Momo", number: "", holder: "" },
 ];
 
 const cardTypes = [
@@ -187,41 +186,7 @@ const TopUp = () => {
             </div>
 
             {/* Bank accounts */}
-            <div className="bg-card border border-border rounded-xl p-6 neon-card space-y-4">
-              <div className="flex items-center gap-2">
-                <Wallet className="w-6 h-6 text-neon-cyan" />
-                <h2 className="font-display text-lg font-bold text-secondary neon-cyan-text">CHUYỂN KHOẢN NGÂN HÀNG</h2>
-              </div>
-
-              <div className="space-y-3">
-                {banks.map((bank) => (
-                  <div key={bank.name} className="bg-muted border border-border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-bold text-foreground">{bank.name}</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <span className="text-muted-foreground">STK: </span>
-                        <span className="text-foreground font-mono">{bank.number}</span>
-                      </div>
-                      <button
-                        onClick={() => handleCopy(bank.number, bank.name)}
-                        className="flex items-center gap-1 text-primary hover:text-primary/80 text-xs justify-end"
-                      >
-                        {copiedField === bank.name ? (
-                          <><CheckCircle className="w-3 h-3" /> Đã copy</>
-                        ) : (
-                          <><Copy className="w-3 h-3" /> Copy STK</>
-                        )}
-                      </button>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">Chủ TK: {bank.holder}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* E-wallets */}
+            {/* E-wallets - moved up */}
             <div className="bg-card border border-border rounded-xl p-6 neon-card space-y-4">
               <div className="flex items-center gap-2">
                 <Smartphone className="w-6 h-6 text-neon-cyan" />
@@ -253,6 +218,43 @@ const TopUp = () => {
                       )}
                     </div>
                     {w.holder && <p className="text-xs text-muted-foreground mt-1">Chủ TK: {w.holder}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bank accounts - moved down */}
+            <div className="bg-card border border-border rounded-xl p-6 neon-card space-y-4">
+              <div className="flex items-center gap-2">
+                <Wallet className="w-6 h-6 text-neon-cyan" />
+                <h2 className="font-display text-lg font-bold text-secondary neon-cyan-text">CHUYỂN KHOẢN NGÂN HÀNG</h2>
+              </div>
+
+              <div className="space-y-3">
+                {banks.map((bank) => (
+                  <div key={bank.name} className="bg-muted border border-border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-bold text-foreground">{bank.name}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">STK: </span>
+                        <span className="text-foreground font-mono">{bank.number || "Chưa cập nhật"}</span>
+                      </div>
+                      {bank.number && (
+                        <button
+                          onClick={() => handleCopy(bank.number, bank.name)}
+                          className="flex items-center gap-1 text-primary hover:text-primary/80 text-xs justify-end"
+                        >
+                          {copiedField === bank.name ? (
+                            <><CheckCircle className="w-3 h-3" /> Đã copy</>
+                          ) : (
+                            <><Copy className="w-3 h-3" /> Copy STK</>
+                          )}
+                        </button>
+                      )}
+                    </div>
+                    {bank.holder && <p className="text-xs text-muted-foreground mt-1">Chủ TK: {bank.holder}</p>}
                   </div>
                 ))}
               </div>
