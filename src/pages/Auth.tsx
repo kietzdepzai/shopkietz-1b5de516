@@ -167,7 +167,7 @@ const Auth = () => {
 
           <button
             onClick={handleGoogleLogin}
-            disabled={loading}
+            disabled={submitting}
             className="w-full py-3 bg-muted border border-border rounded-lg font-semibold text-sm text-foreground hover:bg-border transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
