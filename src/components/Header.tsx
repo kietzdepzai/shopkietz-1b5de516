@@ -56,7 +56,7 @@ const Header = () => {
             { name: "Sản phẩm", href: "/#products" },
             { name: "Nạp tiền", href: "/nap-tien" },
             { name: "Đơn hàng", href: "#" },
-            { name: "Lịch sử", href: "#" },
+            { name: "Lịch sử", href: "/lich-su" },
           ].map((item, i) => (
             <a
               key={item.name}
