@@ -1,4 +1,5 @@
 import { useState } from "react";
+import zalopayQR from "@/assets/zalopay-qr.png";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
