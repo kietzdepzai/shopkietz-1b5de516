@@ -9,7 +9,7 @@ import AdminProducts from "@/components/admin/AdminProducts";
 import AdminOverview from "@/components/admin/AdminOverview";
 import AdminOrders from "@/components/admin/AdminOrders";
 
-type Tab = "overview" | "users" | "topups" | "products";
+type Tab = "overview" | "users" | "topups" | "products" | "orders";
 
 const Admin = () => {
   const { user, signOut, loading } = useAuth();
