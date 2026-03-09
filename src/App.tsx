@@ -9,6 +9,7 @@ import TopUp from "./pages/TopUp";
 import History from "./pages/History";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
+import OrderDetail from "./pages/OrderDetail";
 import NotFound from "./pages/NotFound";
 import ClickSparkle from "./components/ClickSparkle";
 
