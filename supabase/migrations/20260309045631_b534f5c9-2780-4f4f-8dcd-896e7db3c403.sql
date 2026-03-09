@@ -1,0 +1,1 @@
+ALTER TABLE public.products ADD COLUMN account_info TEXT DEFAULT NULL;

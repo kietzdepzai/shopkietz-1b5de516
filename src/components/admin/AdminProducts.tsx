@@ -19,7 +19,7 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
-  const [form, setForm] = useState({ name: "", description: "", price: 0, stock: 0, category: "Blox Fruits", status: "active" });
+  const [form, setForm] = useState({ name: "", description: "", price: 0, stock: 0, category: "Blox Fruits", status: "active", account_info: "" });
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -31,7 +31,7 @@ const AdminProducts = () => {
   useEffect(() => { fetchProducts(); }, []);
 
   const resetForm = () => {
-    setForm({ name: "", description: "", price: 0, stock: 0, category: "Blox Fruits", status: "active" });
+    setForm({ name: "", description: "", price: 0, stock: 0, category: "Blox Fruits", status: "active", account_info: "" });
     setEditing(null);
     setShowForm(false);
   };
@@ -48,7 +48,7 @@ const AdminProducts = () => {
   };
 
   const handleEdit = (p: Product) => {
-    setForm({ name: p.name, description: p.description || "", price: p.price, stock: p.stock, category: p.category, status: p.status });
+    setForm({ name: p.name, description: p.description || "", price: p.price, stock: p.stock, category: p.category, status: p.status, account_info: (p as any).account_info || "" });
     setEditing(p);
     setShowForm(true);
   };
@@ -121,6 +121,16 @@ const AdminProducts = () => {
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={2}
               className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary focus:neon-border transition-all text-sm resize-none"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-foreground mb-1 block">Thông tin tài khoản (hiện sau khi mua)</label>
+            <textarea
+              value={form.account_info}
+              onChange={(e) => setForm({ ...form, account_info: e.target.value })}
+              rows={3}
+              placeholder="VD: Username: abc123&#10;Password: xyz789&#10;Cookie: ..."
+              className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary focus:neon-border transition-all text-sm resize-none font-mono"
             />
           </div>
           <div className="flex gap-2">
