@@ -50,6 +50,7 @@ const Admin = () => {
 
   const tabs = [
     { id: "overview" as Tab, name: "Tổng quan", icon: LayoutDashboard },
+    { id: "orders" as Tab, name: "Đơn hàng", icon: ShoppingBag },
     { id: "users" as Tab, name: "Người dùng", icon: Users },
     { id: "topups" as Tab, name: "Nạp tiền", icon: CreditCard },
     { id: "products" as Tab, name: "Sản phẩm", icon: Package },
