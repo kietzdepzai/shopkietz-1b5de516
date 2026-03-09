@@ -85,7 +85,8 @@ const ProductCard = ({ name, price, stock, description, category, accountInfo }:
       product_name: name,
       product_category: category,
       price: numericPrice,
-    });
+      account_info: accountInfo || null,
+    } as any);
 
     if (orderError) {
       await supabase.from("profiles").update({ balance: profile.balance }).eq("user_id", user.id);
