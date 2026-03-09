@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       orders: {
         Row: {
+          account_info: string | null
           created_at: string
           id: string
           price: number
@@ -25,6 +26,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          account_info?: string | null
           created_at?: string
           id?: string
           price: number
@@ -34,6 +36,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          account_info?: string | null
           created_at?: string
           id?: string
           price?: number
