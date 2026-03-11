@@ -89,8 +89,10 @@ const Index = () => {
           <div className="flex justify-center py-16">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        ) : products.length === 0 ? (
-          <div className="text-center py-16 text-muted-foreground">Chưa có sản phẩm nào.</div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-16 text-muted-foreground">
+            {searchQuery ? `Không tìm thấy sản phẩm "${searchQuery}"` : "Chưa có sản phẩm nào."}
+          </div>
         ) : (
           Object.entries(grouped).map(([category, prods]) => {
             const catSlug = slugMap[category] || category.toLowerCase().replace(/\s+/g, "");
