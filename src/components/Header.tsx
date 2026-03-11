@@ -148,30 +148,17 @@ const Header = () => {
 
             return item.dropdown ? (
               <div key={item.name} className="relative" ref={historyRef}>
-                <button
-                  onClick={() => setHistoryOpen(!historyOpen)}
-                  className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                <a
+                  href="/lich-su"
+                  onClick={(e) => { e.preventDefault(); window.location.href = "/lich-su"; }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all inline-block ${
                     isActive
                       ? "gradient-primary text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   }`}
                 >
                   {item.name}
-                  <ChevronDown className={`w-3 h-3 transition-transform ${historyOpen ? "rotate-180" : ""}`} />
-                </button>
-                {historyOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[180px] z-50 animate-fade-in origin-top">
-                    <a href="/lich-su?tab=orders" onClick={() => setHistoryOpen(false)} className="block px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                      Lịch sử đơn hàng
-                    </a>
-                    <a href="/lich-su?tab=activity" onClick={() => setHistoryOpen(false)} className="block px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                      Nhật ký hoạt động
-                    </a>
-                    <a href="/lich-su?tab=balance" onClick={() => setHistoryOpen(false)} className="block px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                      Biến động số dư
-                    </a>
-                  </div>
-                )}
+                </a>
               </div>
             ) : (
               <a
