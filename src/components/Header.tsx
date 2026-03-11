@@ -9,7 +9,7 @@ const Header = () => {
   const { user, signOut } = useAuth();
   const location = useLocation();
   const currentPath = location.pathname;
-  const [historyOpen, setHistoryOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
