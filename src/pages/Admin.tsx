@@ -87,6 +87,7 @@ const Admin = () => {
           {tab === "topups" && <AdminTopups />}
           {tab === "products" && <AdminProducts />}
           {tab === "categories" && <AdminCategories />}
+          {tab === "discounts" && <AdminDiscountCodes />}
         </div>
       </main>
     </div>
