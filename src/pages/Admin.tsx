@@ -90,6 +90,7 @@ const Admin = () => {
           {tab === "products" && <AdminProducts />}
           {tab === "categories" && <AdminCategories />}
           {tab === "discounts" && <AdminDiscountCodes />}
+          {tab === "ctv" && <AdminCTV />}
         </div>
       </main>
     </div>
