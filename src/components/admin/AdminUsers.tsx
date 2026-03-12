@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Search } from "lucide-react";
+import { Search, Mail } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 type Profile = {
   id: string;
