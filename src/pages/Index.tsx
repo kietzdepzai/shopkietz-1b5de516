@@ -74,11 +74,6 @@ const Index = () => {
       <main className="container mx-auto px-4 py-6 space-y-8">
         <AnnouncementBanner />
 
-        {/* Recent activity */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <RecentPurchases />
-          <RecentTopups />
-        </div>
 
         {/* Search */}
         <div className="relative max-w-md">
@@ -127,7 +122,11 @@ const Index = () => {
           })
         )}
 
-        {/* Removed duplicate RecentPurchases - now shown above */}
+        {/* Recent activity */}
+        <div className="grid md:grid-cols-2 gap-6">
+          <RecentPurchases />
+          <RecentTopups />
+        </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           <PolicySection />
