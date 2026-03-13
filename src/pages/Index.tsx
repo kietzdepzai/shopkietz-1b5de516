@@ -74,11 +74,6 @@ const Index = () => {
       <main className="container mx-auto px-4 py-6 space-y-8">
         <AnnouncementBanner />
 
-        {/* Recent activity */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <RecentPurchases />
-          <RecentTopups />
-        </div>
 
         {/* Search */}
         <div className="relative max-w-md">
