@@ -14,7 +14,8 @@ const OrderDetail = () => {
   const { user, loading: authLoading } = useAuth();
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [copiedAll, setCopiedAll] = useState(false);
 
   useEffect(() => {
     if (!user || !id) return;
@@ -32,10 +33,15 @@ const OrderDetail = () => {
     fetch();
   }, [user, id]);
 
-  const handleCopy = async (text: string) => {
+  const handleCopy = async (text: string, index?: number) => {
     await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (index !== undefined) {
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } else {
+      setCopiedAll(true);
+      setTimeout(() => setCopiedAll(false), 2000);
+    }
   };
 
   if (authLoading || loading) {
@@ -81,8 +87,8 @@ const OrderDetail = () => {
   }
 
   const accountInfo = order.account_info || "";
-  // Try to parse Tk:Mk format
   const lines = accountInfo.split("\n").filter((l: string) => l.trim());
+  const quantity = lines.length || 1;
 
   return (
     <div className="min-h-screen bg-background">
@@ -120,7 +126,11 @@ const OrderDetail = () => {
               <span className="px-2 py-0.5 bg-muted rounded text-xs font-medium text-foreground">{order.product_category}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-border">
-              <span className="text-sm text-muted-foreground">Giá</span>
+              <span className="text-sm text-muted-foreground">Số lượng</span>
+              <span className="text-sm font-bold text-foreground">{quantity}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-sm text-muted-foreground">Tổng giá</span>
               <span className="text-sm font-bold text-destructive">-{formatVND(order.price)}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-border">
@@ -136,25 +146,28 @@ const OrderDetail = () => {
           <div className="bg-muted border border-border rounded-xl p-5 space-y-4">
             <div className="flex items-center gap-2">
               <Lock className="w-4 h-4 text-primary" />
-              <h2 className="font-bold text-foreground text-sm">THÔNG TIN TÀI KHOẢN</h2>
+              <h2 className="font-bold text-foreground text-sm">THÔNG TIN TÀI KHOẢN ({quantity} tài khoản)</h2>
             </div>
 
             {accountInfo ? (
               <>
                 <div className="space-y-2">
                   {lines.map((line: string, i: number) => (
-                    <div key={i} className="bg-background border border-border rounded-lg p-3 flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <User className="w-4 h-4 text-muted-foreground shrink-0" />
-                        <span className="text-sm font-mono text-foreground truncate">{line}</span>
+                    <div key={i} className="bg-background border border-border rounded-lg p-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <User className="w-4 h-4 text-muted-foreground shrink-0" />
+                          <span className="text-xs font-semibold text-muted-foreground shrink-0">TK {i + 1}:</span>
+                          <span className="text-sm font-mono text-foreground truncate">{line}</span>
+                        </div>
+                        <button
+                          onClick={() => handleCopy(line, i)}
+                          className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0"
+                          title="Sao chép"
+                        >
+                          {copiedIndex === i ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}
+                        </button>
                       </div>
-                      <button
-                        onClick={() => handleCopy(line)}
-                        className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0"
-                        title="Sao chép"
-                      >
-                        {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}
-                      </button>
                     </div>
                   ))}
                 </div>
@@ -163,8 +176,8 @@ const OrderDetail = () => {
                   onClick={() => handleCopy(accountInfo)}
                   className="w-full py-2.5 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                 >
-                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  {copied ? "Đã sao chép tất cả!" : "Sao chép tất cả"}
+                  {copiedAll ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {copiedAll ? "Đã sao chép tất cả!" : "Sao chép tất cả"}
                 </button>
               </>
             ) : (

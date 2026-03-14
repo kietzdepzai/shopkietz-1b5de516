@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Trash2, Pencil, GripVertical } from "lucide-react";
+import { Plus, Trash2, Pencil, GripVertical, Image } from "lucide-react";
 
 type Category = {
   id: string;
   name: string;
   slug: string;
   sort_order: number;
+  image_url: string | null;
 };
 
 const AdminCategories = () => {
@@ -14,9 +15,11 @@ const AdminCategories = () => {
   const [loading, setLoading] = useState(true);
   const [newName, setNewName] = useState("");
   const [newSlug, setNewSlug] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
   const [editing, setEditing] = useState<Category | null>(null);
   const [editName, setEditName] = useState("");
   const [editSlug, setEditSlug] = useState("");
+  const [editImageUrl, setEditImageUrl] = useState("");
 
   const fetchCategories = async () => {
     setLoading(true);
@@ -33,9 +36,15 @@ const AdminCategories = () => {
     if (!newName.trim()) return;
     const slug = newSlug.trim() || generateSlug(newName);
     const maxOrder = categories.length > 0 ? Math.max(...categories.map(c => c.sort_order)) : 0;
-    await supabase.from("categories").insert({ name: newName.trim(), slug, sort_order: maxOrder + 1 } as any);
+    await supabase.from("categories").insert({
+      name: newName.trim(),
+      slug,
+      sort_order: maxOrder + 1,
+      image_url: newImageUrl.trim() || null,
+    } as any);
     setNewName("");
     setNewSlug("");
+    setNewImageUrl("");
     fetchCategories();
   };
 
@@ -49,11 +58,16 @@ const AdminCategories = () => {
     setEditing(cat);
     setEditName(cat.name);
     setEditSlug(cat.slug);
+    setEditImageUrl(cat.image_url || "");
   };
 
   const handleUpdate = async () => {
     if (!editing || !editName.trim()) return;
-    await supabase.from("categories").update({ name: editName.trim(), slug: editSlug.trim() || generateSlug(editName) }).eq("id", editing.id);
+    await supabase.from("categories").update({
+      name: editName.trim(),
+      slug: editSlug.trim() || generateSlug(editName),
+      image_url: editImageUrl.trim() || null,
+    }).eq("id", editing.id);
     setEditing(null);
     fetchCategories();
   };
@@ -63,28 +77,48 @@ const AdminCategories = () => {
       <h1 className="font-display text-2xl font-bold text-primary neon-text">QUẢN LÝ DANH MỤC</h1>
 
       {/* Add form */}
-      <div className="bg-card border border-border rounded-xl p-4 neon-card flex flex-wrap gap-3 items-end">
-        <div className="flex-1 min-w-[200px]">
-          <label className="text-sm font-medium text-foreground mb-1 block">Tên danh mục</label>
-          <input
-            value={newName}
-            onChange={(e) => { setNewName(e.target.value); setNewSlug(generateSlug(e.target.value)); }}
-            placeholder="VD: Max Level"
-            className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm"
-          />
+      <div className="bg-card border border-border rounded-xl p-4 neon-card space-y-3">
+        <div className="flex flex-wrap gap-3 items-end">
+          <div className="flex-1 min-w-[200px]">
+            <label className="text-sm font-medium text-foreground mb-1 block">Tên danh mục</label>
+            <input
+              value={newName}
+              onChange={(e) => { setNewName(e.target.value); setNewSlug(generateSlug(e.target.value)); }}
+              placeholder="VD: Max Level"
+              className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm"
+            />
+          </div>
+          <div className="w-40">
+            <label className="text-sm font-medium text-foreground mb-1 block">Slug</label>
+            <input
+              value={newSlug}
+              onChange={(e) => setNewSlug(e.target.value)}
+              placeholder="maxlevel"
+              className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm font-mono"
+            />
+          </div>
         </div>
-        <div className="w-40">
-          <label className="text-sm font-medium text-foreground mb-1 block">Slug</label>
-          <input
-            value={newSlug}
-            onChange={(e) => setNewSlug(e.target.value)}
-            placeholder="maxlevel"
-            className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm font-mono"
-          />
+        <div className="flex flex-wrap gap-3 items-end">
+          <div className="flex-1 min-w-[200px]">
+            <label className="text-sm font-medium text-foreground mb-1 block flex items-center gap-1.5">
+              <Image className="w-4 h-4 text-muted-foreground" /> Link ảnh danh mục
+            </label>
+            <input
+              value={newImageUrl}
+              onChange={(e) => setNewImageUrl(e.target.value)}
+              placeholder="https://example.com/image.png"
+              className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm"
+            />
+          </div>
+          {newImageUrl && (
+            <div className="w-10 h-10 rounded-lg overflow-hidden border border-border bg-muted shrink-0">
+              <img src={newImageUrl} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+            </div>
+          )}
+          <button onClick={handleAdd} className="flex items-center gap-2 px-4 py-2.5 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
+            <Plus className="w-4 h-4" /> Thêm
+          </button>
         </div>
-        <button onClick={handleAdd} className="flex items-center gap-2 px-4 py-2.5 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
-          <Plus className="w-4 h-4" /> Thêm
-        </button>
       </div>
 
       {/* List */}
@@ -93,6 +127,7 @@ const AdminCategories = () => {
           <thead>
             <tr className="border-b border-border bg-muted/50">
               <th className="text-left px-4 py-3 font-semibold text-foreground">Thứ tự</th>
+              <th className="text-left px-4 py-3 font-semibold text-foreground">Ảnh</th>
               <th className="text-left px-4 py-3 font-semibold text-foreground">Tên</th>
               <th className="text-left px-4 py-3 font-semibold text-foreground">Slug</th>
               <th className="text-right px-4 py-3 font-semibold text-foreground">Hành động</th>
@@ -100,9 +135,9 @@ const AdminCategories = () => {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={4} className="text-center py-8 text-muted-foreground">Đang tải...</td></tr>
+              <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">Đang tải...</td></tr>
             ) : categories.length === 0 ? (
-              <tr><td colSpan={4} className="text-center py-8 text-muted-foreground">Chưa có danh mục</td></tr>
+              <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">Chưa có danh mục</td></tr>
             ) : categories.map((c) => (
               <tr key={c.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-3 text-muted-foreground">
@@ -110,6 +145,17 @@ const AdminCategories = () => {
                     <GripVertical className="w-4 h-4" />
                     {c.sort_order}
                   </div>
+                </td>
+                <td className="px-4 py-3">
+                  {editing?.id === c.id ? (
+                    <input value={editImageUrl} onChange={(e) => setEditImageUrl(e.target.value)}
+                      placeholder="Link ảnh..."
+                      className="bg-muted border border-border rounded px-2 py-1 text-sm w-full" />
+                  ) : c.image_url ? (
+                    <img src={c.image_url} alt={c.name} className="w-8 h-8 rounded object-cover" />
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
                 </td>
                 <td className="px-4 py-3 text-foreground font-medium">
                   {editing?.id === c.id ? (

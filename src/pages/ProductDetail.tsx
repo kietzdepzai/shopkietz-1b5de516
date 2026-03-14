@@ -61,37 +61,35 @@ const ProductDetail = () => {
     }
   };
 
-  const handleBuy = async () => {
+  const handleBuy = async (quantity: number = 1) => {
     if (!user) {
       toast({ title: "Vui lòng đăng nhập", variant: "destructive" });
       return;
     }
     setBuying(true);
-    const { data: profile } = await supabase.from("profiles").select("balance").eq("user_id", user.id).single();
-    if (!profile || profile.balance < product.price) {
+
+    const { data, error } = await supabase.rpc("purchase_product_batch", {
+      p_user_id: user.id,
+      p_product_id: product.id,
+      p_quantity: quantity,
+    });
+
+    if (error) {
       setBuying(false);
-      toast({ title: "❌ Số dư không đủ", description: "Vui lòng nạp thêm!", variant: "destructive" });
+      toast({ title: "Lỗi", description: error.message, variant: "destructive" });
       return;
     }
-    const { error: balanceError } = await supabase.from("profiles").update({ balance: profile.balance - product.price }).eq("user_id", user.id);
-    if (balanceError) { setBuying(false); toast({ title: "Lỗi", variant: "destructive" }); return; }
 
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const orderCode = "VAK" + Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
-
-    const { error: orderError } = await supabase.from("orders").insert({
-      user_id: user.id, product_name: product.name, product_category: product.category,
-      price: product.price, account_info: product.account_info || null, order_code: orderCode,
-    } as any);
-
-    if (orderError) {
-      await supabase.from("profiles").update({ balance: profile.balance }).eq("user_id", user.id);
+    const result = data as any;
+    if (!result.success) {
       setBuying(false);
-      toast({ title: "Lỗi", description: "Đã hoàn tiền.", variant: "destructive" });
+      toast({ title: "❌ " + result.error, variant: "destructive" });
       return;
     }
+
     setBuying(false);
-    toast({ title: "✅ Mua hàng thành công!", description: `Mã đơn: ${orderCode}` });
+    toast({ title: "✅ Mua hàng thành công!", description: `Mã đơn: ${result.order_code}` });
+    window.location.href = `/don-hang/${result.order_id}`;
   };
 
   if (loading) {
@@ -245,7 +243,7 @@ const ProductDetail = () => {
         price={formatVND(product.price)}
         numericPrice={product.price}
         stock={product.stock}
-        onConfirm={(qty, code) => handleBuy()}
+        onConfirm={(qty) => handleBuy(qty)}
         buying={buying}
       />
     </div>

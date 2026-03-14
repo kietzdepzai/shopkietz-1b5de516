@@ -30,10 +30,10 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
   const { toast } = useToast();
   const [buying, setBuying] = useState(false);
   const [showAccDialog, setShowAccDialog] = useState(false);
-  const [purchasedAccInfos, setPurchasedAccInfos] = useState<string[]>([]);
+  const [purchasedQuantity, setPurchasedQuantity] = useState(0);
   const [purchasedOrderCode, setPurchasedOrderCode] = useState("");
-  const [showConfirm, setShowConfirm] = useState(false);
   const [purchasedOrderId, setPurchasedOrderId] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleBuy = async (quantity: number, discountCode?: string) => {
     if (!user) {
@@ -51,45 +51,23 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
     setBuying(true);
     setShowConfirm(false);
 
-    // Purchase one at a time for quantity
-    const allAccInfos: string[] = [];
-    let orderCode = "";
-    
-    // Generate a single order code for the batch
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const batchOrderCode = "VAK" + Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+    const { data, error } = await supabase.rpc("purchase_product_batch", {
+      p_user_id: user.id,
+      p_product_id: id,
+      p_quantity: quantity,
+    });
 
-    for (let i = 0; i < quantity; i++) {
-      const { data, error } = await supabase.rpc("purchase_product", {
-        p_user_id: user.id,
-        p_product_id: id,
-      });
+    if (error) {
+      toast({ title: "Lỗi", description: error.message, variant: "destructive" });
+      setBuying(false);
+      return;
+    }
 
-      if (error) {
-        toast({ title: "Lỗi", description: error.message, variant: "destructive" });
-        setBuying(false);
-        return;
-      }
-
-      const result = data as any;
-      if (!result.success) {
-        if (i > 0) {
-          toast({ title: `⚠️ Chỉ mua được ${i}/${quantity}`, description: result.error, variant: "destructive" });
-          break;
-        }
-        toast({ title: "❌ " + result.error, variant: "destructive" });
-        setBuying(false);
-        return;
-      }
-
-      if (result.account_info) allAccInfos.push(result.account_info);
-      
-      // Update all orders from this batch to use the same order code
-      if (result.order_id) {
-        await supabase.from("orders").update({ order_code: batchOrderCode } as any).eq("id", result.order_id);
-        if (i === 0) setPurchasedOrderId(result.order_id);
-      }
-      orderCode = batchOrderCode;
+    const result = data as any;
+    if (!result.success) {
+      toast({ title: "❌ " + result.error, variant: "destructive" });
+      setBuying(false);
+      return;
     }
 
     // Update discount code usage
@@ -100,14 +78,10 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
     }
 
     setBuying(false);
-
-    if (allAccInfos.length > 0) {
-      setPurchasedAccInfos(allAccInfos);
-      setPurchasedOrderCode(orderCode);
-      setShowAccDialog(true);
-    } else {
-      toast({ title: "✅ Mua hàng thành công!", description: `Mã đơn: ${orderCode}` });
-    }
+    setPurchasedQuantity(result.quantity || quantity);
+    setPurchasedOrderCode(result.order_code);
+    setPurchasedOrderId(result.order_id);
+    setShowAccDialog(true);
   };
 
   return (
@@ -177,7 +151,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
           <div className="space-y-3">
             <div className="bg-muted border border-border rounded-lg p-4">
               <p className="text-xs text-muted-foreground mb-1 font-semibold">Sản phẩm:</p>
-              <p className="text-sm text-foreground font-medium">{name} (x{purchasedAccInfos.length})</p>
+              <p className="text-sm text-foreground font-medium">{name} (x{purchasedQuantity})</p>
             </div>
             <div className="bg-muted border border-border rounded-lg p-4">
               <p className="text-xs text-muted-foreground mb-1 font-semibold">Mã đơn:</p>
