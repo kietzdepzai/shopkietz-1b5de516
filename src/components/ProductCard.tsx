@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ShoppingCart, Eye, Package, Loader2, Copy, Check } from "lucide-react";
+import { ShoppingCart, Eye, Package, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -32,15 +32,8 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
   const [showAccDialog, setShowAccDialog] = useState(false);
   const [purchasedAccInfos, setPurchasedAccInfos] = useState<string[]>([]);
   const [purchasedOrderCode, setPurchasedOrderCode] = useState("");
-  const [copied, setCopied] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
-  const handleCopy = async () => {
-    const text = purchasedAccInfos.join("\n");
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const [purchasedOrderId, setPurchasedOrderId] = useState("");
 
   const handleBuy = async (quantity: number, discountCode?: string) => {
     if (!user) {
@@ -94,6 +87,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
       // Update all orders from this batch to use the same order code
       if (result.order_id) {
         await supabase.from("orders").update({ order_code: batchOrderCode } as any).eq("id", result.order_id);
+        if (i === 0) setPurchasedOrderId(result.order_id);
       }
       orderCode = batchOrderCode;
     }
@@ -173,12 +167,12 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
         buying={buying}
       />
 
-      {/* Success dialog - no auto redirect */}
+      {/* Success dialog - account info hidden */}
       <Dialog open={showAccDialog} onOpenChange={setShowAccDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-primary flex items-center gap-2">✅ Mua hàng thành công!</DialogTitle>
-            <DialogDescription>Thông tin tài khoản của bạn. Hãy sao chép và lưu lại ngay!</DialogDescription>
+            <DialogDescription>Đơn hàng đã được tạo. Xem chi tiết đơn hàng để lấy thông tin tài khoản.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div className="bg-muted border border-border rounded-lg p-4">
@@ -189,22 +183,17 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
               <p className="text-xs text-muted-foreground mb-1 font-semibold">Mã đơn:</p>
               <p className="text-sm text-primary font-mono font-bold">{purchasedOrderCode}</p>
             </div>
-            <div className="bg-muted border border-border rounded-lg p-4 max-h-60 overflow-y-auto">
-              <p className="text-xs text-muted-foreground mb-2 font-semibold">Thông tin tài khoản:</p>
-              <div className="space-y-2">
-                {purchasedAccInfos.map((info, idx) => (
-                  <div key={idx} className="bg-background border border-border rounded-lg p-2">
-                    <p className="text-[10px] text-muted-foreground mb-0.5 font-semibold">Tài khoản {idx + 1}:</p>
-                    <pre className="text-sm text-foreground font-mono whitespace-pre-wrap break-all">{info}</pre>
-                  </div>
-                ))}
-              </div>
+            <div className="bg-muted border border-border rounded-lg p-4">
+              <p className="text-xs text-muted-foreground mb-1 font-semibold">Thông tin tài khoản:</p>
+              <p className="text-sm text-muted-foreground">●●●●●●●● (đã ẩn)</p>
+              <p className="text-xs text-muted-foreground mt-1">Bấm "Xem chi tiết" để xem thông tin tài khoản đầy đủ.</p>
             </div>
           </div>
           <DialogFooter className="flex gap-2 sm:gap-2">
-            <button onClick={handleCopy} className="flex items-center gap-2 px-4 py-2 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
-              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              {copied ? "Đã sao chép!" : "Sao chép"}
+            <button onClick={() => { setShowAccDialog(false); window.location.href = `/don-hang/${purchasedOrderId}`; }}
+              className="flex items-center gap-2 px-4 py-2 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
+              <Eye className="w-4 h-4" />
+              Xem chi tiết
             </button>
             <button onClick={() => { setShowAccDialog(false); window.location.reload(); }}
               className="px-4 py-2 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
