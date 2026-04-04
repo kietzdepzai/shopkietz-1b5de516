@@ -24,6 +24,23 @@ const Auth = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [forgotPassword, setForgotPassword] = useState(false);
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) { setError("Vui lòng nhập email"); return; }
+    setSubmitting(true);
+    setError("");
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) {
+      setError(error.message);
+    } else {
+      setMessage("Đã gửi email đặt lại mật khẩu! Kiểm tra hộp thư của bạn.");
+    }
+    setSubmitting(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
