@@ -24,6 +24,23 @@ const Auth = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [forgotPassword, setForgotPassword] = useState(false);
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) { setError("Vui lòng nhập email"); return; }
+    setSubmitting(true);
+    setError("");
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) {
+      setError(error.message);
+    } else {
+      setMessage("Đã gửi email đặt lại mật khẩu! Kiểm tra hộp thư của bạn.");
+    }
+    setSubmitting(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,10 +95,10 @@ const Auth = () => {
           <div className="flex flex-col items-center mb-6">
             <Gamepad2 className="w-12 h-12 text-primary neon-text mb-2" />
             <h1 className="font-display text-xl font-bold text-primary neon-text">
-              {isLogin ? "ĐĂNG NHẬP" : "ĐĂNG KÝ"}
+              {forgotPassword ? "QUÊN MẬT KHẨU" : isLogin ? "ĐĂNG NHẬP" : "ĐĂNG KÝ"}
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
-              {isLogin ? "Chào mừng trở lại!" : "Tạo tài khoản mới"}
+              {forgotPassword ? "Nhập email để nhận liên kết đặt lại" : isLogin ? "Chào mừng trở lại!" : "Tạo tài khoản mới"}
             </p>
           </div>
 
@@ -96,8 +113,8 @@ const Auth = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
+          <form onSubmit={forgotPassword ? handleForgotPassword : handleSubmit} className="space-y-4">
+            {!isLogin && !forgotPassword && (
               <div>
                 <label className="text-sm font-medium text-foreground mb-1.5 block">Tên hiển thị</label>
                 <div className="relative">
@@ -129,21 +146,35 @@ const Auth = () => {
               </div>
             </div>
 
-            <div>
-              <label className="text-sm font-medium text-foreground mb-1.5 block">Mật khẩu</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Nhập mật khẩu..."
-                  required
-                  minLength={6}
-                  className="w-full bg-muted border border-border rounded-lg py-3 pl-10 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:neon-border transition-all"
-                />
+            {!forgotPassword && (
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Mật khẩu</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Nhập mật khẩu..."
+                    required
+                    minLength={6}
+                    className="w-full bg-muted border border-border rounded-lg py-3 pl-10 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:neon-border transition-all"
+                  />
+                </div>
               </div>
-            </div>
+            )}
+
+            {isLogin && !forgotPassword && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => { setForgotPassword(true); setError(""); setMessage(""); }}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Quên mật khẩu?
+                </button>
+              </div>
+            )}
 
             <button
               type="submit"
@@ -151,7 +182,7 @@ const Auth = () => {
               className="w-full py-3 gradient-primary text-primary-foreground font-bold rounded-lg text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <LogIn className="w-4 h-4" />
-              {submitting ? "Đang xử lý..." : isLogin ? "Đăng nhập" : "Đăng ký"}
+              {submitting ? "Đang xử lý..." : forgotPassword ? "Gửi email đặt lại" : isLogin ? "Đăng nhập" : "Đăng ký"}
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
@@ -180,13 +211,24 @@ const Auth = () => {
           </button>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
-            {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}{" "}
-            <button
-              onClick={() => { setIsLogin(!isLogin); setError(""); setMessage(""); }}
-              className="text-primary font-semibold hover:underline"
-            >
-              {isLogin ? "Đăng ký ngay" : "Đăng nhập"}
-            </button>
+            {forgotPassword ? (
+              <button
+                onClick={() => { setForgotPassword(false); setError(""); setMessage(""); }}
+                className="text-primary font-semibold hover:underline"
+              >
+                ← Quay lại đăng nhập
+              </button>
+            ) : (
+              <>
+                {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}{" "}
+                <button
+                  onClick={() => { setIsLogin(!isLogin); setError(""); setMessage(""); }}
+                  className="text-primary font-semibold hover:underline"
+                >
+                  {isLogin ? "Đăng ký ngay" : "Đăng nhập"}
+                </button>
+              </>
+            )}
           </p>
         </div>
       </main>
