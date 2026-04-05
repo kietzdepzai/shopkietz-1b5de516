@@ -126,7 +126,12 @@ const Header = () => {
                     </a>
                     {isAdmin && (
                       <a href="/admin" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-neon-orange hover:bg-muted transition-colors">
-                        <Shield className="w-4 h-4" /> Admin Dashboard
+                        <Shield className="w-4 h-4" /> Admin Panel
+                      </a>
+                    )}
+                    {isCTV && !isAdmin && (
+                      <a href="/ctv" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-primary hover:bg-muted transition-colors">
+                        <Package className="w-4 h-4" /> CTV
                       </a>
                     )}
                     <div className="border-t border-border mt-1">

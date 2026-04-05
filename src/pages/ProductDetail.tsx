@@ -244,7 +244,7 @@ const ProductDetail = () => {
         price={formatVND(product.price)}
         numericPrice={product.price}
         stock={product.stock}
-        onConfirm={(qty) => handleBuy(qty)}
+        onConfirm={(qty, code) => handleBuy(qty, code)}
         buying={buying}
       />
     </div>
