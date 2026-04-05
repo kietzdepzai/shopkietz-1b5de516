@@ -14,6 +14,7 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isCTV, setIsCTV] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
