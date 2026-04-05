@@ -61,7 +61,7 @@ const ProductDetail = () => {
     }
   };
 
-  const handleBuy = async (quantity: number = 1) => {
+  const handleBuy = async (quantity: number = 1, discountCode?: string) => {
     if (!user) {
       toast({ title: "Vui lòng đăng nhập", variant: "destructive" });
       return;
@@ -72,7 +72,8 @@ const ProductDetail = () => {
       p_user_id: user.id,
       p_product_id: product.id,
       p_quantity: quantity,
-    });
+      p_discount_code: discountCode || null,
+    } as any);
 
     if (error) {
       setBuying(false);
