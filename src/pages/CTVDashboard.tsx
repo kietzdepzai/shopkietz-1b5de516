@@ -423,11 +423,17 @@ const ProductRow = ({
             {product.status === "active" ? "Đang bán" : "Ẩn"}
           </span>
         </td>
+        <td className="px-4 py-3 text-right">
+          <button onClick={(e) => { e.stopPropagation(); onDeleteProduct(); }}
+            className="p-2 rounded-lg hover:bg-muted transition-colors text-destructive" title="Xoá sản phẩm">
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </td>
       </tr>
 
       {isExpanded && (
         <tr>
-          <td colSpan={6} className="px-4 py-4 bg-muted/20">
+          <td colSpan={7} className="px-4 py-4 bg-muted/20">
             <div className="space-y-4">
               {/* Actions */}
               <div className="flex items-center gap-2">
