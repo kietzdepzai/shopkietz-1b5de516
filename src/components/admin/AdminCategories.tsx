@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Trash2, Pencil, GripVertical, Image } from "lucide-react";
+import { Plus, Trash2, Pencil, GripVertical } from "lucide-react";
+import ImagePasteUpload from "@/components/ImagePasteUpload";
 
 type Category = {
   id: string;
