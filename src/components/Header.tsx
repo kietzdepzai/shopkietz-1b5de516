@@ -14,13 +14,17 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isCTV, setIsCTV] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!user) { setIsAdmin(false); setBalance(null); return; }
+    if (!user) { setIsAdmin(false); setIsCTV(false); setBalance(null); return; }
     supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").then(({ data }) => {
       setIsAdmin(!!(data && data.length > 0));
+    });
+    supabase.from("ctv_assignments").select("id").eq("is_active", true).then(({ data }) => {
+      setIsCTV(!!(data && data.length > 0));
     });
     supabase.from("profiles").select("balance").eq("user_id", user.id).single().then(({ data }) => {
       setBalance(data?.balance ?? 0);
@@ -122,7 +126,12 @@ const Header = () => {
                     </a>
                     {isAdmin && (
                       <a href="/admin" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-neon-orange hover:bg-muted transition-colors">
-                        <Shield className="w-4 h-4" /> Admin Dashboard
+                        <Shield className="w-4 h-4" /> Admin Panel
+                      </a>
+                    )}
+                    {isCTV && !isAdmin && (
+                      <a href="/ctv" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-primary hover:bg-muted transition-colors">
+                        <Package className="w-4 h-4" /> CTV
                       </a>
                     )}
                     <div className="border-t border-border mt-1">

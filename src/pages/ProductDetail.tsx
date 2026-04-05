@@ -5,11 +5,35 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Package, ShoppingCart, Loader2, AlertCircle, Clock, Pencil, Save, X } from "lucide-react";
+import { ArrowLeft, Package, ShoppingCart, Loader2, AlertCircle, Clock, Pencil, Save, X, ImagePlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PurchaseConfirmDialog from "@/components/PurchaseConfirmDialog";
 
 const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
+
+const IMAGE_URL_REGEX = /https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg)(?:\?[^\s]*)?/gi;
+
+const DescriptionWithImages = ({ text }: { text: string }) => {
+  const parts = text.split(IMAGE_URL_REGEX);
+  const images = text.match(IMAGE_URL_REGEX) || [];
+  
+  return (
+    <div className="text-sm text-foreground space-y-2">
+      {parts.map((part, i) => (
+        <span key={i}>
+          {part.split('\n').map((line, j) => (
+            <span key={j}>{j > 0 && <br />}{line}</span>
+          ))}
+          {images[i] && (
+            <a href={images[i]} target="_blank" rel="noopener noreferrer" className="block my-2">
+              <img src={images[i]} alt="Ảnh sản phẩm" className="max-w-full rounded-lg border border-border max-h-64 object-contain" />
+            </a>
+          )}
+        </span>
+      ))}
+    </div>
+  );
+};
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -61,7 +85,7 @@ const ProductDetail = () => {
     }
   };
 
-  const handleBuy = async (quantity: number = 1) => {
+  const handleBuy = async (quantity: number = 1, discountCode?: string) => {
     if (!user) {
       toast({ title: "Vui lòng đăng nhập", variant: "destructive" });
       return;
@@ -72,7 +96,8 @@ const ProductDetail = () => {
       p_user_id: user.id,
       p_product_id: product.id,
       p_quantity: quantity,
-    });
+      p_discount_code: discountCode || null,
+    } as any);
 
     if (error) {
       setBuying(false);
@@ -165,7 +190,35 @@ const ProductDetail = () => {
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground mb-1 block">Mô tả</label>
                   <textarea value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                    onPaste={(e) => {
+                      const text = e.clipboardData.getData('text');
+                      if (text && IMAGE_URL_REGEX.test(text)) {
+                        e.preventDefault();
+                        const textarea = e.target as HTMLTextAreaElement;
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const current = editForm.description || "";
+                        const newVal = current.substring(0, start) + text + current.substring(end);
+                        setEditForm({ ...editForm, description: newVal });
+                      }
+                    }}
                     rows={3} className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground text-sm focus:outline-none focus:border-primary transition-all resize-none" />
+                  <div className="flex items-center gap-2 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const url = prompt("Nhập link ảnh (URL):");
+                        if (url && url.trim()) {
+                          const current = editForm.description || "";
+                          setEditForm({ ...editForm, description: current + (current ? "\n" : "") + url.trim() });
+                        }
+                      }}
+                      className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+                    >
+                      <ImagePlus className="w-3 h-3" /> Chèn link ảnh
+                    </button>
+                    <span className="text-xs text-muted-foreground">Paste link ảnh trực tiếp vào mô tả</span>
+                  </div>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground mb-1 block">Thông tin tài khoản (Tk:Mk)</label>
@@ -217,7 +270,7 @@ const ProductDetail = () => {
                 {product.description && (
                   <div className="bg-muted border border-border rounded-xl p-4">
                     <p className="text-xs font-semibold text-muted-foreground mb-1">Mô tả:</p>
-                    <p className="text-sm text-foreground">{product.description}</p>
+                    <DescriptionWithImages text={product.description} />
                   </div>
                 )}
 
@@ -243,7 +296,7 @@ const ProductDetail = () => {
         price={formatVND(product.price)}
         numericPrice={product.price}
         stock={product.stock}
-        onConfirm={(qty) => handleBuy(qty)}
+        onConfirm={(qty, code) => handleBuy(qty, code)}
         buying={buying}
       />
     </div>
