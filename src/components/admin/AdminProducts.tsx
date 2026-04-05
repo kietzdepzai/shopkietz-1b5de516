@@ -87,7 +87,7 @@ const AdminProducts = () => {
   };
 
   const resetForm = () => {
-    setForm({ name: "", description: "", price: 0, category: categories[0]?.name || "Blox Fruits", status: "active" });
+    setForm({ name: "", description: "", price: 0, category: categories[0]?.name || "Blox Fruits", status: "active", image_url: "" });
     setAccountLines("");
     setEditing(null);
     setShowForm(false);
