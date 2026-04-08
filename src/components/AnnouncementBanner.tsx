@@ -2,14 +2,25 @@ import { Shield, MessageCircle, Users, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+const DEFAULT_TITLE = "SHOPKIETZ - SHOP ACC BLOX FRUITS, ACC RANDOM, ROBUX UY TÍN";
+const DEFAULT_DESC = "🔥 Giao dịch tự động 24/7 – Mua là có ngay\n🛡️ Bảo mật tuyệt đối – Cam kết uy tín\n💰 Giá cả học sinh – Chất lượng hàng đầu";
+
 const AnnouncementBanner = () => {
-  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [title, setTitle] = useState(DEFAULT_TITLE);
+  const [descLines, setDescLines] = useState<string[]>(DEFAULT_DESC.split("\n"));
 
   useEffect(() => {
     supabase.from("shop_settings").select("*").then(({ data }) => {
       const map: Record<string, string> = {};
       (data || []).forEach((s: any) => { map[s.key] = s.value; });
-      setSettings(map);
+      if (map["shop_title"]) setTitle(map["shop_title"]);
+      if (map["shop_description"]) {
+        setDescLines(map["shop_description"].split("\n").filter(Boolean));
+      } else {
+        // Fallback to old subtitle fields
+        const lines = [map["shop_subtitle_1"], map["shop_subtitle_2"], map["shop_subtitle_3"]].filter(Boolean);
+        if (lines.length > 0) setDescLines(lines);
+      }
     });
   }, []);
 
@@ -40,13 +51,11 @@ const AnnouncementBanner = () => {
       </div>
 
       <div className="mt-5 pt-5 border-t border-border">
-        <p className="text-lg font-bold text-foreground">
-          {settings["shop_title"] || "SHOPKIETZ - SHOP ACC BLOX FRUITS, ACC RANDOM, ROBUX UY TÍN"}
-        </p>
+        <p className="text-lg font-bold text-foreground">{title}</p>
         <div className="mt-3 space-y-1 text-sm text-muted-foreground">
-          <p>{settings["shop_subtitle_1"] || "🔥 Giao dịch tự động 24/7 – Mua là có ngay"}</p>
-          <p>{settings["shop_subtitle_2"] || "🛡️ Bảo mật tuyệt đối – Cam kết uy tín"}</p>
-          <p>{settings["shop_subtitle_3"] || "💰 Giá cả học sinh – Chất lượng hàng đầu"}</p>
+          {descLines.map((line, i) => (
+            <p key={i}>{line}</p>
+          ))}
         </div>
       </div>
     </div>
