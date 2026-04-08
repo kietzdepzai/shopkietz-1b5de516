@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Trash2, Pencil, GripVertical, Search, ChevronDown, ChevronUp, Package } from "lucide-react";
 import ImagePasteUpload from "@/components/ImagePasteUpload";
