@@ -1,4 +1,4 @@
-import { Search, ShoppingCart, User, Gamepad2, ChevronDown, LogOut, Wallet, Shield, Phone, Mail, CreditCard, History, FileText, HelpCircle, Home, Package } from "lucide-react";
+import { Search, ShoppingCart, User, Gamepad2, ChevronDown, LogOut, Wallet, Shield, Phone, Mail, CreditCard, History as HistoryIcon, FileText, HelpCircle, Home, Package, Landmark, Smartphone, Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,10 +13,22 @@ const Header = () => {
   const currentPath = location.pathname;
   const [searchQuery, setSearchQuery] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [topupOpen, setTopupOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isCTV, setIsCTV] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const topupRef = useRef<HTMLDivElement>(null);
+  const historyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    supabase.from("shop_settings").select("key,value").eq("key", "shop_logo_url").maybeSingle().then(({ data }) => {
+      if (data?.value) setLogoUrl(data.value);
+    });
+  }, []);
 
   useEffect(() => {
     if (!user) { setIsAdmin(false); setIsCTV(false); setBalance(null); return; }
@@ -34,6 +46,8 @@ const Header = () => {
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
+      if (topupRef.current && !topupRef.current.contains(e.target as Node)) setTopupOpen(false);
+      if (historyRef.current && !historyRef.current.contains(e.target as Node)) setHistoryOpen(false);
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
@@ -46,15 +60,8 @@ const Header = () => {
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
 
-  const navItems = [
-    { name: "Trang chủ", href: "/", match: "/", icon: <Home className="w-4 h-4" /> },
-    { name: "Nạp tiền", href: "/nap-tien", match: "/nap-tien", icon: <CreditCard className="w-4 h-4" /> },
-    { name: "Lịch sử nạp", href: "/lich-su-nap", match: "/lich-su-nap", icon: <Wallet className="w-4 h-4" /> },
-    { name: "Lịch sử mua", href: "/lich-su-mua", match: "/lich-su-mua", icon: <ShoppingCart className="w-4 h-4" /> },
-    { name: "Biến động số dư", href: "/bien-dong-so-du", match: "/bien-dong-so-du", icon: <FileText className="w-4 h-4" /> },
-    { name: "Quy định nạp thẻ", href: "/quy-dinh-nap-the", match: "/quy-dinh-nap-the", icon: <FileText className="w-4 h-4" /> },
-    { name: "FAQ", href: "/faq", match: "/faq", icon: <HelpCircle className="w-4 h-4" /> },
-  ];
+  const isHistoryActive = ["/lich-su-nap", "/lich-su-mua", "/bien-dong-so-du", "/lich-su"].some(p => currentPath.startsWith(p));
+  const isTopupActive = currentPath.startsWith("/nap-tien");
 
   return (
     <header className="bg-card border-b border-border sticky top-0 z-50">
@@ -73,9 +80,13 @@ const Header = () => {
       </div>
 
       <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between gap-4">
-          <a href="/" className="flex items-center gap-2 shrink-0">
-            <Gamepad2 className="w-10 h-10 text-primary neon-text animate-spin-slow" />
+        <div className="flex items-center justify-between gap-3 sm:gap-4">
+          <a href="/" className="flex items-center gap-2 shrink-0 min-w-0">
+            {logoUrl ? (
+              <img src={logoUrl} alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-contain shrink-0" />
+            ) : (
+              <Gamepad2 className="w-9 h-9 sm:w-10 sm:h-10 text-primary neon-text animate-spin-slow shrink-0" />
+            )}
             <AnimatedLogo />
           </a>
 
@@ -90,11 +101,11 @@ const Header = () => {
             </div>
           </form>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {user ? (
               <div className="relative" ref={userMenuRef}>
                 <button onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-lg hover:bg-border transition-colors">
+                  className="flex items-center gap-2 px-2 sm:px-3 py-2 bg-muted border border-border rounded-lg hover:bg-border transition-colors">
                   <div className="w-7 h-7 rounded-full gradient-primary flex items-center justify-center text-primary-foreground text-xs font-bold">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
@@ -108,29 +119,23 @@ const Header = () => {
                       <p className="text-xs text-muted-foreground">{user.email}</p>
                       {balance !== null && (
                         <div className="mt-2 bg-primary/10 border border-primary/20 rounded-md px-3 py-1.5">
-                          <p className="text-xs font-bold text-primary">💰 Số dư: {balance.toLocaleString("vi-VN")}đ</p>
+                          <p className="text-xs font-bold text-primary">💰 Số dư: <span className="text-yellow-500">{balance.toLocaleString("vi-VN")}đ</span></p>
                         </div>
                       )}
                     </div>
-                    <a href="/trang-ca-nhan" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
+                    <a href="/trang-ca-nhan" className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
                       <User className="w-4 h-4" /> Trang cá nhân
                     </a>
-                    <a href="/lich-su-mua" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
+                    <a href="/lich-su-mua" className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
                       <ShoppingCart className="w-4 h-4" /> Đơn hàng của tôi
                     </a>
-                    <a href="/lich-su" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                      <Wallet className="w-4 h-4" /> Lịch sử giao dịch
-                    </a>
-                    <a href="/nap-tien" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                      <CreditCard className="w-4 h-4" /> Nạp tiền
-                    </a>
                     {isAdmin && (
-                      <a href="/admin" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-neon-orange hover:bg-muted transition-colors">
+                      <a href="/admin" className="flex items-center gap-2 px-4 py-2.5 text-sm text-neon-orange hover:bg-muted transition-colors">
                         <Shield className="w-4 h-4" /> Admin Panel
                       </a>
                     )}
                     {isCTV && !isAdmin && (
-                      <a href="/ctv" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-primary hover:bg-muted transition-colors">
+                      <a href="/ctv" className="flex items-center gap-2 px-4 py-2.5 text-sm text-primary hover:bg-muted transition-colors">
                         <Package className="w-4 h-4" /> CTV
                       </a>
                     )}
@@ -144,16 +149,19 @@ const Header = () => {
                 )}
               </div>
             ) : (
-              <a href="/dang-nhap" className="flex items-center gap-2 px-4 py-2 gradient-primary rounded-lg font-semibold text-sm text-primary-foreground hover:opacity-90 transition-opacity">
+              <a href="/dang-nhap" className="flex items-center gap-2 px-3 sm:px-4 py-2 gradient-primary rounded-lg font-semibold text-sm text-primary-foreground hover:opacity-90 transition-opacity">
                 <User className="w-4 h-4" />
                 <span className="hidden sm:inline">Đăng nhập</span>
               </a>
             )}
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg bg-muted border border-border">
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 
-        {/* Simple flat nav - no dropdowns */}
-        <nav className="mt-3 flex items-center gap-2 overflow-x-auto pb-1">
+        {/* Nav with dropdowns */}
+        <nav className={`mt-3 ${mobileMenuOpen ? "flex flex-col" : "hidden"} md:flex md:flex-row md:items-center gap-2 md:overflow-x-auto pb-1`}>
           {user && (
             <button
               onClick={() => navigate("/nap-tien")}
@@ -166,21 +174,66 @@ const Header = () => {
               </span>
             </button>
           )}
-          {navItems.map((item) => {
-            const isActive = item.match === "/" ? currentPath === "/" : currentPath.startsWith(item.match);
-            return (
-              <button
-                key={item.name}
-                onClick={() => navigate(item.href)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-                  isActive ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
-              >
-                {item.icon}
-                {item.name}
-              </button>
-            );
-          })}
+
+          <button onClick={() => navigate("/")} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${currentPath === "/" ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
+            <Home className="w-4 h-4" /> Trang chủ
+          </button>
+
+          {/* Nạp tiền dropdown */}
+          <div className="relative" ref={topupRef}>
+            <button onClick={() => setTopupOpen(!topupOpen)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${isTopupActive ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
+              <CreditCard className="w-4 h-4" /> Nạp tiền
+              <ChevronDown className={`w-3 h-3 transition-transform ${topupOpen ? "rotate-180" : ""}`} />
+            </button>
+            {topupOpen && (
+              <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[200px] z-50 animate-fade-in">
+                <div className="px-3 py-2 border-b border-border flex items-center gap-2 text-primary font-bold text-xs">
+                  <Landmark className="w-4 h-4" /> Chọn phương thức nạp
+                </div>
+                <button onClick={() => { navigate("/nap-tien?method=bank"); setTopupOpen(false); }}
+                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
+                  <Landmark className="w-4 h-4 text-primary" /> Ngân hàng
+                </button>
+                <button onClick={() => { navigate("/nap-tien?method=card"); setTopupOpen(false); }}
+                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
+                  <Smartphone className="w-4 h-4 text-accent" /> Thẻ cào
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Lịch sử dropdown */}
+          <div className="relative" ref={historyRef}>
+            <button onClick={() => setHistoryOpen(!historyOpen)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${isHistoryActive ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
+              <HistoryIcon className="w-4 h-4" /> Lịch sử
+              <ChevronDown className={`w-3 h-3 transition-transform ${historyOpen ? "rotate-180" : ""}`} />
+            </button>
+            {historyOpen && (
+              <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[200px] z-50 animate-fade-in">
+                <button onClick={() => { navigate("/lich-su-nap"); setHistoryOpen(false); }}
+                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
+                  <Wallet className="w-4 h-4 text-primary" /> Lịch sử nạp
+                </button>
+                <button onClick={() => { navigate("/lich-su-mua"); setHistoryOpen(false); }}
+                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
+                  <ShoppingCart className="w-4 h-4 text-primary" /> Lịch sử mua
+                </button>
+                <button onClick={() => { navigate("/bien-dong-so-du"); setHistoryOpen(false); }}
+                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
+                  <FileText className="w-4 h-4 text-primary" /> Biến động số dư
+                </button>
+              </div>
+            )}
+          </div>
+
+          <button onClick={() => navigate("/quy-dinh-nap-the")} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${currentPath.startsWith("/quy-dinh-nap-the") ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
+            <FileText className="w-4 h-4" /> Quy định nạp thẻ
+          </button>
+          <button onClick={() => navigate("/faq")} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${currentPath.startsWith("/faq") ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
+            <HelpCircle className="w-4 h-4" /> FAQ
+          </button>
         </nav>
       </div>
     </header>
