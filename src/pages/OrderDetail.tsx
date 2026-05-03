@@ -146,7 +146,7 @@ const OrderDetail = () => {
           <div className="bg-muted border border-border rounded-xl p-5 space-y-4">
             <div className="flex items-center gap-2">
               <Lock className="w-4 h-4 text-primary" />
-              <h2 className="font-bold text-foreground text-sm">THÔNG TIN TÀI KHOẢN ({quantity} tài khoản)</h2>
+              <h2 className="font-bold text-foreground text-sm">THÔNG TIN ĐƠN HÀNG</h2>
             </div>
 
             {accountInfo ? (
@@ -156,8 +156,7 @@ const OrderDetail = () => {
                     <div key={i} className="bg-background border border-border rounded-lg p-3">
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <User className="w-4 h-4 text-muted-foreground shrink-0" />
-                          <span className="text-xs font-semibold text-muted-foreground shrink-0">TK {i + 1}:</span>
+                          <span className="text-xs font-bold text-primary shrink-0 w-5">{i + 1}.</span>
                           <span className="text-sm font-mono text-foreground truncate">{line}</span>
                         </div>
                         <button
