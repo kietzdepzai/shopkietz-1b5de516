@@ -161,7 +161,7 @@ const Header = () => {
         </div>
 
         {/* Nav with dropdowns */}
-        <nav className={`mt-3 ${mobileMenuOpen ? "flex flex-col" : "hidden"} md:flex md:flex-row md:items-center gap-2 md:overflow-x-auto pb-1`}>
+        <nav className={`mt-3 ${mobileMenuOpen ? "flex flex-col" : "hidden"} md:flex md:flex-row md:items-center gap-2 pb-1 relative z-40`}>
           {user && (
             <button
               onClick={() => navigate("/nap-tien")}
