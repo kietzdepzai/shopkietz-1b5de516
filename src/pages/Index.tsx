@@ -22,7 +22,7 @@ interface Product {
   image_url: string | null;
 }
 
-type Category = { id: string; name: string; slug: string };
+type Category = { id: string; name: string; slug: string; image_url: string | null };
 
 const Index = () => {
   const [searchParams] = useSearchParams();
@@ -53,7 +53,8 @@ const Index = () => {
   }, []);
 
   const slugMap: Record<string, string> = {};
-  categories.forEach(c => { slugMap[c.name] = c.slug; });
+  const imgMap: Record<string, string | null> = {};
+  categories.forEach(c => { slugMap[c.name] = c.slug; imgMap[c.name] = c.image_url; });
 
   const filtered = searchQuery.trim()
     ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -104,6 +105,7 @@ const Index = () => {
               <ProductSection
                 key={category}
                 title={category.toUpperCase()}
+                imageUrl={imgMap[category] || undefined}
                 products={prods.map((p) => ({
                   id: p.id,
                   name: p.name,
