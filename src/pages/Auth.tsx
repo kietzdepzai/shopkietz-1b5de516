@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+
 import { Gamepad2, Mail, Lock, User as UserIcon, LogIn, ArrowRight } from "lucide-react";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
@@ -100,13 +100,15 @@ const Auth = () => {
   const handleGoogleLogin = async () => {
     setSubmitting(true);
     setError("");
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
     });
-    if (result?.error) {
-      setError(result.error.message || "Đăng nhập Google thất bại");
+    if (error) {
+      setError(error.message || "Đăng nhập Google thất bại");
+      setSubmitting(false);
     }
-    setSubmitting(false);
+    // Trình duyệt sẽ tự redirect sang Google
   };
 
   return (
