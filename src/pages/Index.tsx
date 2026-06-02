@@ -9,6 +9,7 @@ import TopUpGuide from "@/components/TopUpGuide";
 import RecentPurchases from "@/components/RecentPurchases";
 import RecentTopups from "@/components/RecentTopups";
 import Footer from "@/components/Footer";
+import WelcomePopup from "@/components/WelcomePopup";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 
@@ -68,6 +69,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <WelcomePopup />
       <TopBar />
       <Header />
 

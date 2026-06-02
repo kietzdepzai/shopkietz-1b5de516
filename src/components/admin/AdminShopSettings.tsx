@@ -9,6 +9,9 @@ const AdminShopSettings = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
+  const [popupEnabled, setPopupEnabled] = useState(false);
+  const [popupTitle, setPopupTitle] = useState("Thông báo");
+  const [popupContent, setPopupContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -24,6 +27,9 @@ const AdminShopSettings = () => {
         const lines = [map["shop_subtitle_1"], map["shop_subtitle_2"], map["shop_subtitle_3"]].filter(Boolean);
         setDescription(lines.join("\n"));
       }
+      setPopupEnabled(map["welcome_popup_enabled"] === "true");
+      setPopupTitle(map["welcome_popup_title"] || "Thông báo");
+      setPopupContent(map["welcome_popup_content"] || "");
       setLoading(false);
     });
   }, []);
@@ -35,6 +41,10 @@ const AdminShopSettings = () => {
       supabase.from("shop_settings").upsert({ key: "shop_title", value: title, updated_at: now }, { onConflict: "key" }),
       supabase.from("shop_settings").upsert({ key: "shop_description", value: description, updated_at: now }, { onConflict: "key" }),
       supabase.from("shop_settings").upsert({ key: "shop_logo_url", value: logoUrl, updated_at: now }, { onConflict: "key" }),
+      supabase.from("shop_settings").upsert({ key: "welcome_popup_enabled", value: popupEnabled ? "true" : "false", updated_at: now }, { onConflict: "key" }),
+      supabase.from("shop_settings").upsert({ key: "welcome_popup_title", value: popupTitle, updated_at: now }, { onConflict: "key" }),
+      supabase.from("shop_settings").upsert({ key: "welcome_popup_content", value: popupContent, updated_at: now }, { onConflict: "key" }),
+      supabase.from("shop_settings").upsert({ key: "welcome_popup_version", value: String(Date.now()), updated_at: now }, { onConflict: "key" }),
     ]);
     setSaving(false);
     toast({ title: "✅ Đã lưu cài đặt shop!" });
@@ -100,12 +110,39 @@ const AdminShopSettings = () => {
           <div className="mt-2 space-y-1 text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, "<br/>") }} />
         </div>
 
-        <button onClick={handleSave} disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
-          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          {saving ? "Đang lưu..." : "Lưu thay đổi"}
-        </button>
       </div>
+
+      <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
+        <h2 className="font-display text-lg font-bold text-primary">🔔 Thông báo Popup (hiện khi vào trang chủ)</h2>
+        <label className="flex items-center gap-2 text-sm text-foreground">
+          <input type="checkbox" checked={popupEnabled} onChange={(e) => setPopupEnabled(e.target.checked)} className="w-4 h-4" />
+          Bật hiển thị popup thông báo
+        </label>
+        <div>
+          <label className="text-sm font-medium text-foreground mb-1 block">Tiêu đề popup</label>
+          <input value={popupTitle} onChange={(e) => setPopupTitle(e.target.value)}
+            className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-foreground mb-1 block">Nội dung popup (hỗ trợ HTML, xuống dòng tự động)</label>
+          <textarea value={popupContent} onChange={(e) => setPopupContent(e.target.value)} rows={6}
+            placeholder={"Chào mừng đến với : shop.net\n\nMgg: <i>random</i>"}
+            className="w-full bg-muted border border-border rounded-lg py-3 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm leading-relaxed resize-y font-mono" />
+        </div>
+        {popupContent && (
+          <div className="bg-muted border border-border rounded-xl p-4">
+            <p className="text-xs font-semibold text-muted-foreground mb-2">Xem trước:</p>
+            <p className="text-base font-bold text-foreground mb-2">🔔 {popupTitle}</p>
+            <div className="text-sm text-foreground" dangerouslySetInnerHTML={{ __html: popupContent.replace(/\n/g, "<br/>") }} />
+          </div>
+        )}
+      </div>
+
+      <button onClick={handleSave} disabled={saving}
+        className="flex items-center gap-2 px-6 py-2.5 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
+        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+        {saving ? "Đang lưu..." : "Lưu thay đổi"}
+      </button>
     </div>
   );
 };
