@@ -233,7 +233,9 @@ export type Database = {
           balance: number
           created_at: string
           display_name: string | null
+          full_name: string | null
           id: string
+          phone: string | null
           transfer_code: string | null
           updated_at: string
           user_id: string
@@ -244,7 +246,9 @@ export type Database = {
           balance?: number
           created_at?: string
           display_name?: string | null
+          full_name?: string | null
           id?: string
+          phone?: string | null
           transfer_code?: string | null
           updated_at?: string
           user_id: string
@@ -255,7 +259,9 @@ export type Database = {
           balance?: number
           created_at?: string
           display_name?: string | null
+          full_name?: string | null
           id?: string
+          phone?: string | null
           transfer_code?: string | null
           updated_at?: string
           user_id?: string
