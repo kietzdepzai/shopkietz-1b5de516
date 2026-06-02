@@ -21,6 +21,7 @@ import CardRegulations from "./pages/CardRegulations";
 import WarrantyPolicy from "./pages/WarrantyPolicy";
 import CTVDashboard from "./pages/CTVDashboard";
 import ResetPassword from "./pages/ResetPassword";
+import ChangePassword from "./pages/ChangePassword";
 import ClickSparkle from "./components/ClickSparkle";
 import TopupNotifier from "./components/TopupNotifier";
 import KietzBadge from "./components/KietzBadge";
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/chinh-sach-bao-hanh" element={<WarrantyPolicy />} />
             <Route path="/ctv" element={<CTVDashboard />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/doi-mat-khau" element={<ChangePassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
