@@ -9,6 +9,9 @@ const AdminShopSettings = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
+  const [popupEnabled, setPopupEnabled] = useState(false);
+  const [popupTitle, setPopupTitle] = useState("Thông báo");
+  const [popupContent, setPopupContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -24,6 +27,9 @@ const AdminShopSettings = () => {
         const lines = [map["shop_subtitle_1"], map["shop_subtitle_2"], map["shop_subtitle_3"]].filter(Boolean);
         setDescription(lines.join("\n"));
       }
+      setPopupEnabled(map["welcome_popup_enabled"] === "true");
+      setPopupTitle(map["welcome_popup_title"] || "Thông báo");
+      setPopupContent(map["welcome_popup_content"] || "");
       setLoading(false);
     });
   }, []);
@@ -35,6 +41,10 @@ const AdminShopSettings = () => {
       supabase.from("shop_settings").upsert({ key: "shop_title", value: title, updated_at: now }, { onConflict: "key" }),
       supabase.from("shop_settings").upsert({ key: "shop_description", value: description, updated_at: now }, { onConflict: "key" }),
       supabase.from("shop_settings").upsert({ key: "shop_logo_url", value: logoUrl, updated_at: now }, { onConflict: "key" }),
+      supabase.from("shop_settings").upsert({ key: "welcome_popup_enabled", value: popupEnabled ? "true" : "false", updated_at: now }, { onConflict: "key" }),
+      supabase.from("shop_settings").upsert({ key: "welcome_popup_title", value: popupTitle, updated_at: now }, { onConflict: "key" }),
+      supabase.from("shop_settings").upsert({ key: "welcome_popup_content", value: popupContent, updated_at: now }, { onConflict: "key" }),
+      supabase.from("shop_settings").upsert({ key: "welcome_popup_version", value: String(Date.now()), updated_at: now }, { onConflict: "key" }),
     ]);
     setSaving(false);
     toast({ title: "✅ Đã lưu cài đặt shop!" });
