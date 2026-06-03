@@ -100,9 +100,10 @@ const AdminProducts = () => {
       await supabase.from("products").update({
         name: form.name, description: form.description, price: form.price,
         category: form.category, status: form.status, image_url: form.image_url || null,
-      }).eq("id", editing.id);
+        product_type: form.product_type,
+      } as any).eq("id", editing.id);
 
-      if (accountLines.trim()) {
+      if (form.product_type === "account" && accountLines.trim()) {
         const lines = accountLines.split("\n").filter(l => l.trim());
         if (lines.length > 0) {
           await supabase.from("product_accounts").insert(
@@ -114,13 +115,17 @@ const AdminProducts = () => {
           await supabase.from("products").update({ stock: count || 0 }).eq("id", editing.id);
         }
       }
+      if (form.product_type === "boost") {
+        await supabase.from("products").update({ stock: 9999 }).eq("id", editing.id);
+      }
     } else {
       const { data: newProduct } = await supabase.from("products").insert({
         name: form.name, description: form.description, price: form.price,
-        category: form.category, status: form.status, stock: 0, image_url: form.image_url || null,
-      }).select().single();
+        category: form.category, status: form.status, stock: form.product_type === "boost" ? 9999 : 0,
+        image_url: form.image_url || null, product_type: form.product_type,
+      } as any).select().single();
 
-      if (newProduct && accountLines.trim()) {
+      if (newProduct && form.product_type === "account" && accountLines.trim()) {
         const lines = accountLines.split("\n").filter(l => l.trim());
         if (lines.length > 0) {
           await supabase.from("product_accounts").insert(
