@@ -8,6 +8,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft, Package, ShoppingCart, Loader2, AlertCircle, Clock, Pencil, Save, X, ImagePlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PurchaseConfirmDialog from "@/components/PurchaseConfirmDialog";
+import BoostPurchaseDialog from "@/components/BoostPurchaseDialog";
+import { useNavigate } from "react-router-dom";
 
 const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
 
