@@ -299,14 +299,24 @@ const ProductDetail = () => {
                 )}
 
                 {user ? (
-                  <button
-                    onClick={() => setShowConfirm(true)}
-                    disabled={buying || product.stock <= 0}
-                    className="w-full py-3 gradient-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
-                  >
-                    <ShoppingCart className="w-5 h-5" />
-                    {product.stock <= 0 ? "Hết hàng" : "Mua ngay"}
-                  </button>
+                  product.product_type === "boost" ? (
+                    <button
+                      onClick={() => setShowBoost(true)}
+                      disabled={buying}
+                      className="w-full py-3 gradient-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart className="w-5 h-5" /> Đặt dịch vụ cày thuê
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setShowConfirm(true)}
+                      disabled={buying || product.stock <= 0}
+                      className="w-full py-3 gradient-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart className="w-5 h-5" />
+                      {product.stock <= 0 ? "Hết hàng" : "Mua ngay"}
+                    </button>
+                  )
                 ) : (
                   <Link to="/dang-nhap" className="w-full py-3 gradient-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                     <ShoppingCart className="w-5 h-5" /> Đăng nhập để mua
@@ -329,8 +339,18 @@ const ProductDetail = () => {
         onConfirm={(qty, code) => handleBuy(qty, code)}
         buying={buying}
       />
+
+      <BoostPurchaseDialog
+        open={showBoost}
+        onOpenChange={setShowBoost}
+        productName={product.name}
+        price={formatVND(product.price)}
+        onConfirm={handleBoostBuy}
+        buying={buying}
+      />
     </div>
   );
 };
+
 
 export default ProductDetail;
