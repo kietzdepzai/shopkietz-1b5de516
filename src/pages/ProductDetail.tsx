@@ -121,6 +121,22 @@ const ProductDetail = () => {
     window.location.href = `/don-hang/${result.order_id}`;
   };
 
+  const handleBoostBuy = async (username: string, password: string, note: string) => {
+    if (!user) return;
+    setBuying(true);
+    const { data, error } = await supabase.rpc("purchase_boost" as any, {
+      p_user_id: user.id, p_product_id: product.id,
+      p_username: username, p_password: password, p_note: note,
+    });
+    setBuying(false);
+    if (error) { toast({ title: "Lỗi", description: error.message, variant: "destructive" }); return; }
+    const r = data as any;
+    if (!r?.success) { toast({ title: "❌ " + (r?.error || "Đặt thất bại"), variant: "destructive" }); return; }
+    setShowBoost(false);
+    toast({ title: "✅ Đã đặt dịch vụ cày thuê!", description: `Mã đơn: ${r.order_code}. Admin sẽ xử lý sớm.` });
+    navigate("/lich-su-cay-thue");
+  };
+
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
   }
