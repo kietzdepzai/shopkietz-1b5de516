@@ -59,6 +59,9 @@ const App = () => (
             <Route path="/ctv" element={<CTVDashboard />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/doi-mat-khau" element={<ChangePassword />} />
+            <Route path="/lich-su-cay-thue" element={<BoostHistory />} />
+            <Route path="/nap-the" element={<TopUp />} />
+            <Route path="/nap-ngan-hang" element={<TopUp />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
