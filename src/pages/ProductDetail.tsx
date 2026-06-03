@@ -48,7 +48,9 @@ const ProductDetail = () => {
   const [editForm, setEditForm] = useState<any>({});
   const [saving, setSaving] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showBoost, setShowBoost] = useState(false);
   const [buying, setBuying] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
