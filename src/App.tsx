@@ -22,6 +22,7 @@ import WarrantyPolicy from "./pages/WarrantyPolicy";
 import CTVDashboard from "./pages/CTVDashboard";
 import ResetPassword from "./pages/ResetPassword";
 import ChangePassword from "./pages/ChangePassword";
+import BoostHistory from "./pages/BoostHistory";
 import ClickSparkle from "./components/ClickSparkle";
 import TopupNotifier from "./components/TopupNotifier";
 import KietzBadge from "./components/KietzBadge";
