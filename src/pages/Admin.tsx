@@ -12,8 +12,9 @@ import AdminCategories from "@/components/admin/AdminCategories";
 import AdminDiscountCodes from "@/components/admin/AdminDiscountCodes";
 import AdminCTV from "@/components/admin/AdminCTV";
 import AdminShopSettings from "@/components/admin/AdminShopSettings";
+import AdminBoostOrders from "@/components/admin/AdminBoostOrders";
 
-type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv" | "shop_settings";
+type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv" | "shop_settings" | "boost_orders";
 
 const Admin = () => {
   const { user, signOut, loading } = useAuth();
