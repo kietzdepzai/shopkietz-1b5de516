@@ -21,6 +21,7 @@ interface Product {
   description: string | null;
   category: string;
   image_url: string | null;
+  product_type?: string;
 }
 
 type Category = { id: string; name: string; slug: string; image_url: string | null };
@@ -117,6 +118,7 @@ const Index = () => {
                   description: p.description || "",
                   category: p.category,
                   imageUrl: p.image_url || undefined,
+                  product_type: p.product_type,
                 }))}
               />
             );
