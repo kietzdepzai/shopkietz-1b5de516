@@ -107,13 +107,13 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
 
   return (
     <>
-      <div className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 hover:neon-card transition-all duration-300 group">
-        <div className="gradient-primary px-4 py-2 flex items-center justify-between">
+      <div className={`bg-card border rounded-xl overflow-hidden hover:neon-card transition-all duration-300 group ${isBoost ? "border-accent/50 neon-purple" : "border-border hover:border-primary/50"}`}>
+        <div className={`${isBoost ? "gradient-accent" : "gradient-primary"} px-4 py-2 flex items-center justify-between`}>
           <span className="text-xs font-bold text-primary-foreground uppercase tracking-wider">{category}</span>
           <div className="flex items-center gap-1">
             <Package className="w-3.5 h-3.5 text-primary-foreground" />
             <span className="text-xs font-bold text-primary-foreground">
-              {stock > 0 ? `Kho: ${stock}` : "Hết hàng"}
+              {isBoost ? "Dịch vụ cày thuê" : stock > 0 ? `Kho: ${stock}` : "Hết hàng"}
             </span>
           </div>
         </div>
@@ -143,15 +143,15 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
               {user ? (
                 <button
                   onClick={() => isBoost ? setShowBoost(true) : setShowConfirm(true)}
-                  disabled={buying || stock <= 0}
-                  className="flex items-center gap-1.5 px-3 py-2 gradient-primary rounded-lg text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
+                  disabled={buying || (!isBoost && stock <= 0)}
+                  className="flex items-center gap-1.5 px-3 py-2 galaxy-button rounded-lg text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   {buying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />}
-                  {buying ? "Đang xử lý..." : stock <= 0 ? "Hết hàng" : isBoost ? "Đặt cày" : "Mua ngay"}
+                  {buying ? "Đang xử lý..." : !isBoost && stock <= 0 ? "Hết hàng" : isBoost ? "Đặt cày" : "Mua ngay"}
                 </button>
 
               ) : (
-                <Link to="/dang-nhap" className="flex items-center gap-1.5 px-3 py-2 gradient-primary rounded-lg text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">
+                <Link to="/dang-nhap" className="flex items-center gap-1.5 px-3 py-2 galaxy-button rounded-lg text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">
                   <ShoppingCart className="w-3.5 h-3.5" /> Đăng nhập
                 </Link>
               )}
