@@ -185,16 +185,23 @@
     text-shadow: 0 0 10px hsl(var(--neon-cyan) / 0.6), 0 0 30px hsl(var(--neon-cyan) / 0.3);
   }
   .neon-border {
-    box-shadow: 0 0 8px hsl(var(--neon-glow) / 0.3), inset 0 0 8px hsl(var(--neon-glow) / 0.1);
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.8), 0 0 16px hsl(var(--neon-glow) / 0.45), inset 0 0 14px hsl(var(--neon-glow) / 0.12);
   }
   .neon-card {
-    box-shadow: 0 0 15px hsl(var(--neon-glow) / 0.1), 0 4px 20px hsl(220 20% 0% / 0.5);
+    box-shadow: 0 0 18px hsl(var(--neon-glow) / 0.18), 0 0 34px hsl(var(--secondary) / 0.14), 0 4px 20px hsl(220 20% 0% / 0.6);
   }
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--neon-cyan)));
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)) 52%, hsl(var(--accent)));
   }
   .gradient-accent {
-    background: linear-gradient(135deg, hsl(var(--neon-orange)), hsl(var(--neon-red)));
+    background: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)), hsl(var(--primary)));
+  }
+  .galaxy-button {
+    background: radial-gradient(circle at 18% 20%, hsl(0 0% 100% / 0.35), transparent 18%), linear-gradient(100deg, hsl(273 95% 58%), hsl(292 90% 56%) 48%, hsl(330 100% 76%) 100%);
+    box-shadow: 0 0 16px hsl(var(--accent) / 0.65), 0 0 34px hsl(var(--secondary) / 0.45), inset 0 0 16px hsl(0 0% 100% / 0.16);
+  }
+  .neon-purple {
+    box-shadow: 0 0 16px hsl(var(--accent) / 0.55), inset 0 0 14px hsl(var(--accent) / 0.12);
   }
 }
 
