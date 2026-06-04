@@ -142,13 +142,14 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
               )}
               {user ? (
                 <button
-                  onClick={() => setShowConfirm(true)}
+                  onClick={() => isBoost ? setShowBoost(true) : setShowConfirm(true)}
                   disabled={buying || stock <= 0}
                   className="flex items-center gap-1.5 px-3 py-2 gradient-primary rounded-lg text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   {buying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />}
-                  {buying ? "Đang mua..." : stock <= 0 ? "Hết hàng" : "Mua ngay"}
+                  {buying ? "Đang xử lý..." : stock <= 0 ? "Hết hàng" : isBoost ? "Đặt cày" : "Mua ngay"}
                 </button>
+
               ) : (
                 <Link to="/dang-nhap" className="flex items-center gap-1.5 px-3 py-2 gradient-primary rounded-lg text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">
                   <ShoppingCart className="w-3.5 h-3.5" /> Đăng nhập
