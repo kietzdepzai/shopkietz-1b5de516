@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, CreditCard, Package, LayoutDashboard, LogOut, ChevronLeft, Gamepad2, ShoppingBag, FolderOpen, Tag, UserPlus, FileText, Rocket } from "lucide-react";
+import { Users, CreditCard, Package, LayoutDashboard, LogOut, ChevronLeft, Gamepad2, ShoppingBag, FolderOpen, Tag, UserPlus, FileText, Rocket, Server } from "lucide-react";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminTopups from "@/components/admin/AdminTopups";
 import AdminProducts from "@/components/admin/AdminProducts";
@@ -13,8 +13,9 @@ import AdminDiscountCodes from "@/components/admin/AdminDiscountCodes";
 import AdminCTV from "@/components/admin/AdminCTV";
 import AdminShopSettings from "@/components/admin/AdminShopSettings";
 import AdminBoostOrders from "@/components/admin/AdminBoostOrders";
+import AdminCardApiSettings from "@/components/admin/AdminCardApiSettings";
 
-type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv" | "shop_settings" | "boost_orders";
+type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv" | "shop_settings" | "boost_orders" | "card_api";
 
 const Admin = () => {
   const { user, signOut, loading } = useAuth();
@@ -23,7 +24,7 @@ const Admin = () => {
   const [checking, setChecking] = useState(true);
   const [tab, setTab] = useState<Tab>(() => {
     const saved = localStorage.getItem("admin_tab");
-    return (saved && ["overview","users","topups","products","orders","categories","discounts","ctv","shop_settings","boost_orders"].includes(saved)) ? saved as Tab : "overview";
+    return (saved && ["overview","users","topups","products","orders","categories","discounts","ctv","shop_settings","boost_orders","card_api"].includes(saved)) ? saved as Tab : "overview";
   });
 
   useEffect(() => {
@@ -55,6 +56,7 @@ const Admin = () => {
     { id: "boost_orders" as Tab, name: "Đơn cày thuê", icon: Rocket },
     { id: "users" as Tab, name: "Người dùng", icon: Users },
     { id: "topups" as Tab, name: "Nạp tiền", icon: CreditCard },
+    { id: "card_api" as Tab, name: "API gạch thẻ", icon: Server },
     { id: "products" as Tab, name: "Sản phẩm", icon: Package },
     { id: "categories" as Tab, name: "Danh mục", icon: FolderOpen },
     { id: "discounts" as Tab, name: "Mã giảm giá", icon: Tag },
@@ -111,6 +113,7 @@ const Admin = () => {
           {tab === "boost_orders" && <AdminBoostOrders />}
           {tab === "users" && <AdminUsers />}
           {tab === "topups" && <AdminTopups />}
+          {tab === "card_api" && <AdminCardApiSettings />}
           {tab === "products" && <AdminProducts />}
           {tab === "categories" && <AdminCategories />}
           {tab === "discounts" && <AdminDiscountCodes />}
