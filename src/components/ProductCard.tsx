@@ -107,44 +107,39 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
 
   return (
     <>
-      <div className={`bg-card border rounded-xl overflow-hidden hover:neon-card transition-all duration-300 group ${isBoost ? "border-accent/50 neon-purple" : "border-border hover:border-primary/50"}`}>
-        <div className={`${isBoost ? "gradient-accent" : "gradient-primary"} px-4 py-2 flex items-center justify-between`}>
-          <span className="text-xs font-bold text-primary-foreground uppercase tracking-wider">{category}</span>
-          <div className="flex items-center gap-1">
-            <Package className="w-3.5 h-3.5 text-primary-foreground" />
-            <span className="text-xs font-bold text-primary-foreground">
-              {isBoost ? "Dịch vụ cày thuê" : stock > 0 ? `Kho: ${stock}` : "Hết hàng"}
-            </span>
-          </div>
+      <div className={`bg-card border rounded-md overflow-hidden hover:neon-card transition-all duration-300 group ${isBoost ? "border-accent/50 neon-purple" : "border-border hover:border-primary/50"}`}>
+        <div className={`${isBoost ? "gradient-accent" : "bg-muted"} px-4 py-4 flex items-center gap-3 border-b border-border`}>
+          {imageUrl && <img src={imageUrl} alt={name} className="w-12 h-12 rounded object-cover border border-border shrink-0" />}
+          <h3 className="font-semibold text-foreground text-base leading-snug line-clamp-2 group-hover:text-primary transition-colors">{name}</h3>
         </div>
 
         {imageUrl && (
-          <div className="aspect-video w-full overflow-hidden bg-muted">
+          <div className="aspect-video w-full overflow-hidden bg-muted hidden">
             <img src={imageUrl} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
           </div>
         )}
 
-        <div className="p-4 space-y-3">
-          <h3 className="font-semibold text-foreground text-sm leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-            {name}
-          </h3>
-          <p className="text-xs text-muted-foreground line-clamp-3 whitespace-pre-line">{description}</p>
+        <div className="p-4 space-y-4">
+          <p className="text-sm text-foreground line-clamp-5 whitespace-pre-line min-h-[88px]">{description}</p>
 
-          <div className="flex items-center justify-between pt-2 border-t border-border">
-            <span className="text-lg font-semibold text-yellow-500">
-              {user ? price : <span className="text-xs text-muted-foreground italic">Đăng nhập để xem giá</span>}
-            </span>
-            <div className="flex gap-2">
+          <div className="grid grid-cols-3 items-center text-center border-y border-border py-3 gap-2">
+            <div className="space-y-1 border-r border-border"><p className="text-xs font-bold text-foreground">Quốc gia</p><p className="text-lg">🇻🇳</p></div>
+            <div className="space-y-1 border-r border-border"><p className="text-xs font-bold text-foreground">Hiện có</p><span className="inline-flex w-6 h-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">{isBoost ? "∞" : stock}</span></div>
+            <div className="space-y-1"><p className="text-xs font-bold text-foreground">Giá</p><span className="text-lg font-semibold text-yellow-500">{user ? price : "Ẩn"}</span></div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="grid grid-cols-[auto_1fr] gap-2">
               {id && (
-                <Link to={`/san-pham/${id}`} className="p-2 rounded-lg bg-muted hover:bg-border transition-colors" title="Chi tiết">
-                  <Eye className="w-4 h-4 text-muted-foreground" />
+                <Link to={`/san-pham/${id}`} className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-muted border border-border hover:bg-border transition-colors text-sm font-semibold text-foreground" title="Chi tiết">
+                  <Eye className="w-4 h-4 text-muted-foreground" /> Hình ảnh mô tả
                 </Link>
               )}
               {user ? (
                 <button
                   onClick={() => isBoost ? setShowBoost(true) : setShowConfirm(true)}
                   disabled={buying || (!isBoost && stock <= 0)}
-                  className="flex items-center gap-1.5 px-3 py-2 galaxy-button rounded-lg text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2 galaxy-button rounded-full text-sm font-bold text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   {buying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />}
                   {buying ? "Đang xử lý..." : !isBoost && stock <= 0 ? "Hết hàng" : isBoost ? "Đặt cày" : "Mua ngay"}
