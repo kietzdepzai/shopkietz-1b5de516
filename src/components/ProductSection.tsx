@@ -10,7 +10,9 @@ interface Product {
   description: string;
   category: string;
   imageUrl?: string;
+  product_type?: string;
 }
+
 
 interface ProductSectionProps {
   title: string;
