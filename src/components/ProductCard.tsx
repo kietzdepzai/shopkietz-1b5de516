@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ShoppingCart, Eye, Package, Loader2 } from "lucide-react";
+import { ShoppingCart, Eye, Package, Loader2, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -120,7 +120,18 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
         )}
 
         <div className="p-4 space-y-4">
-          <p className="text-sm text-foreground line-clamp-5 whitespace-pre-line min-h-[88px]">{description}</p>
+          <ul className="space-y-1.5 min-h-[88px]">
+            {description.split("\n").map((line, idx) => {
+              const t = line.trim();
+              if (!t) return null;
+              return (
+                <li key={idx} className="flex items-start gap-2 text-sm text-foreground">
+                  <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                  <span className="leading-snug">{t}</span>
+                </li>
+              );
+            })}
+          </ul>
 
           <div className="grid grid-cols-3 items-center text-center border-y border-border py-3 gap-2">
             <div className="space-y-1 border-r border-border"><p className="text-xs font-bold text-foreground">Quốc gia</p><p className="text-lg">🇻🇳</p></div>
