@@ -1,10 +1,9 @@
-import { Search, ShoppingCart, User, Gamepad2, ChevronDown, LogOut, Wallet, Shield, Phone, Mail, CreditCard, History as HistoryIcon, FileText, HelpCircle, Home, Package, Landmark, Smartphone, Menu, X } from "lucide-react";
+import { Search, ShoppingCart, Heart, MessageCircle, ChevronDown, LogOut, User, Shield, Globe, Coins, Package, CreditCard, Newspaper, Home, Phone, Mail, LayoutGrid, Menu, X, HelpCircle, FileText } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import ThemeToggle from "./ThemeToggle";
-import AnimatedLogo from "./AnimatedLogo";
 
 const Header = () => {
   const { user, signOut } = useAuth();
@@ -14,29 +13,29 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [topupOpen, setTopupOpen] = useState(false);
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isCTV, setIsCTV] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [hotline, setHotline] = useState("0967319920");
+  const [email, setEmail] = useState("support@shopkietz.com");
   const userMenuRef = useRef<HTMLDivElement>(null);
   const topupRef = useRef<HTMLDivElement>(null);
-  const historyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    supabase.from("shop_settings").select("key,value").eq("key", "shop_logo_url").maybeSingle().then(({ data }) => {
-      if (data?.value) setLogoUrl(data.value);
+    supabase.from("shop_settings").select("key,value").in("key", ["shop_logo_url", "shop_hotline", "shop_email"]).then(({ data }) => {
+      data?.forEach((r) => {
+        if (r.key === "shop_logo_url" && r.value) setLogoUrl(r.value);
+        if (r.key === "shop_hotline" && r.value) setHotline(r.value);
+        if (r.key === "shop_email" && r.value) setEmail(r.value);
+      });
     });
   }, []);
 
   useEffect(() => {
-    if (!user) { setIsAdmin(false); setIsCTV(false); setBalance(null); return; }
+    if (!user) { setIsAdmin(false); setBalance(null); return; }
     supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").then(({ data }) => {
       setIsAdmin(!!(data && data.length > 0));
-    });
-    supabase.from("ctv_assignments").select("id").eq("is_active", true).then(({ data }) => {
-      setIsCTV(!!(data && data.length > 0));
     });
     supabase.from("profiles").select("balance").eq("user_id", user.id).single().then(({ data }) => {
       setBalance(data?.balance ?? 0);
@@ -47,7 +46,6 @@ const Header = () => {
     const handleClick = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
       if (topupRef.current && !topupRef.current.contains(e.target as Node)) setTopupOpen(false);
-      if (historyRef.current && !historyRef.current.contains(e.target as Node)) setHistoryOpen(false);
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
@@ -59,195 +57,201 @@ const Header = () => {
   };
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
-
-  const isHistoryActive = ["/lich-su-nap", "/lich-su-mua", "/bien-dong-so-du", "/lich-su", "/lich-su-cay-thue"].some(p => currentPath.startsWith(p));
   const isTopupActive = ["/nap-tien", "/nap-the", "/nap-ngan-hang"].some(p => currentPath.startsWith(p));
 
+  const NavPill = ({ icon: Icon, label, path, badge, active, onClick }: any) => (
+    <button
+      onClick={onClick || (() => navigate(path))}
+      className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all ${
+        active ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-primary/5 hover:text-primary"
+      }`}
+    >
+      <Icon className="w-4 h-4" />
+      <span>{label}</span>
+      {badge && (
+        <span className="ml-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-gradient-to-r from-orange-500 to-red-500 text-white leading-none">
+          {badge}
+        </span>
+      )}
+    </button>
+  );
+
   return (
-    <header className="bg-card border-b border-border sticky top-0 z-50">
-      <div className="border-b border-border/50 bg-muted/30">
-        <div className="container mx-auto px-4 py-1.5 flex items-center justify-between">
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <a href="https://discord.gg/shopkietz" target="_blank" rel="noopener" className="flex items-center gap-1 hover:text-primary transition-colors">
-              <Phone className="w-3 h-3" /> Discord: dsc.gg/shopkietz
-            </a>
-            <span className="hidden sm:flex items-center gap-1">
-              <Mail className="w-3 h-3" /> support@shopkietz.com
-            </span>
+    <header className="sticky top-0 z-50 bg-background shadow-sm">
+      {/* Top blue gradient bar */}
+      <div className="brand-gradient text-white">
+        <div className="container mx-auto px-4 h-11 flex items-center justify-between">
+          <nav className="flex items-center gap-1 sm:gap-2 text-sm font-medium">
+            <a href="/quy-dinh-nap-the" className="px-3 py-1.5 hover:bg-white/15 rounded-md transition-colors">Chính sách</a>
+            <a href="/faq" className="px-3 py-1.5 hover:bg-white/15 rounded-md transition-colors">FAQ</a>
+            <a href="/faq" className="px-3 py-1.5 hover:bg-white/15 rounded-md transition-colors">Liên Hệ</a>
+          </nav>
+          <div className="flex items-center gap-2">
+            <button className="flex items-center gap-1.5 px-3 h-8 rounded-full bg-white/15 hover:bg-white/25 text-sm font-medium transition-colors">
+              <Globe className="w-3.5 h-3.5" /> Vietnamese <ChevronDown className="w-3 h-3" />
+            </button>
+            <button className="flex items-center gap-1.5 px-3 h-8 rounded-full bg-white/15 hover:bg-white/25 text-sm font-medium transition-colors">
+              <Coins className="w-3.5 h-3.5" /> VND <ChevronDown className="w-3 h-3" />
+            </button>
+            <div className="[&_button]:!bg-white/15 [&_button:hover]:!bg-white/25 [&_button]:!text-white [&_button]:!border-0 [&_button]:!rounded-full [&_button]:!h-8 [&_button]:!w-8">
+              <ThemeToggle />
+            </div>
           </div>
-          <ThemeToggle />
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between gap-3 sm:gap-4">
-          <a href="/" className="flex items-center gap-2 shrink-0 min-w-0">
+      {/* Middle row: logo, search, actions */}
+      <div className="bg-background border-b border-border/50">
+        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
+          <a href="/" className="shrink-0">
             {logoUrl ? (
               <img
                 src={logoUrl}
                 alt="Logo"
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-contain shrink-0"
+                className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl object-cover shadow-md"
                 onError={() => setLogoUrl(null)}
               />
             ) : (
-              <Gamepad2 className="w-9 h-9 sm:w-10 sm:h-10 text-primary neon-text animate-spin-slow shrink-0" />
+              <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl brand-gradient flex items-center justify-center text-white font-display text-xl shadow-md">SK</div>
             )}
-            <AnimatedLogo />
           </a>
 
-          <form onSubmit={handleSearch} className="flex-1 max-w-xl hidden md:block">
+          <form onSubmit={handleSearch} className="flex-1 hidden md:block">
             <div className="relative">
-              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Tìm kiếm sản phẩm..."
-                className="w-full bg-muted border border-border rounded-lg py-2.5 pl-4 pr-12 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:neon-border transition-all" />
-              <button type="submit" className="absolute right-1 top-1 bottom-1 px-3 gradient-primary rounded-md flex items-center justify-center hover:opacity-90 transition-opacity">
-                <Search className="w-4 h-4 text-primary-foreground" />
+                className="w-full h-12 bg-muted/60 rounded-full pl-6 pr-14 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+              />
+              <button type="submit" aria-label="Tìm kiếm" className="absolute right-1.5 top-1.5 h-9 w-9 rounded-full brand-gradient flex items-center justify-center hover:opacity-90">
+                <Search className="w-4 h-4 text-white" />
               </button>
             </div>
           </form>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 ml-auto">
+            <button onClick={() => navigate("/lich-su-mua")} title="Đơn hàng" className="h-11 w-11 rounded-xl border border-border bg-card hover:bg-muted flex items-center justify-center transition-colors">
+              <ShoppingCart className="w-5 h-5 text-foreground/70" />
+            </button>
+            <button onClick={() => navigate("/trang-ca-nhan")} title="Yêu thích" className="h-11 w-11 rounded-xl border border-border bg-card hover:bg-muted flex items-center justify-center transition-colors">
+              <Heart className="w-5 h-5 text-foreground/70" />
+            </button>
+            <a href="https://discord.gg/shopkietz" target="_blank" rel="noopener" title="Hỗ trợ" className="h-11 w-11 rounded-xl border border-border bg-card hover:bg-muted flex items-center justify-center transition-colors">
+              <MessageCircle className="w-5 h-5 text-foreground/70" />
+            </a>
+
             {user ? (
               <div className="relative" ref={userMenuRef}>
-                <button onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 px-2 sm:px-3 py-2 bg-muted border border-border rounded-lg hover:bg-border transition-colors">
-                  <div className="w-7 h-7 rounded-full gradient-primary flex items-center justify-center text-primary-foreground text-xs font-bold">
+                <button onClick={() => setUserMenuOpen(!userMenuOpen)} className="flex items-center gap-2.5 pl-1 pr-3 h-11 rounded-xl border border-border bg-card hover:bg-muted transition-colors">
+                  <div className="w-9 h-9 rounded-lg brand-gradient flex items-center justify-center text-white text-sm font-bold overflow-hidden">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
-                  <span className="hidden sm:inline text-sm font-medium text-foreground max-w-[100px] truncate">{displayName}</span>
-                  <ChevronDown className={`w-3 h-3 text-muted-foreground transition-transform ${userMenuOpen ? "rotate-180" : ""}`} />
+                  <div className="hidden sm:flex flex-col items-start leading-tight">
+                    <span className="text-xs font-bold text-foreground max-w-[110px] truncate uppercase">{displayName}</span>
+                    <span className="text-[11px] font-semibold text-yellow-500">{(balance ?? 0).toLocaleString("vi-VN")}đ</span>
+                  </div>
+                  <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground transition-transform ${userMenuOpen ? "rotate-180" : ""}`} />
                 </button>
                 {userMenuOpen && (
-                  <div className="absolute top-full right-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[220px] z-50 animate-fade-in">
+                  <div className="absolute top-full right-0 mt-2 bg-card border border-border rounded-xl shadow-lg py-1 min-w-[220px] z-50 animate-fade-in">
                     <div className="px-4 py-2.5 border-b border-border">
-                      <p className="text-sm font-medium text-foreground">{displayName}</p>
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
-                      {balance !== null && (
-                        <div className="mt-2 bg-primary/10 border border-primary/20 rounded-md px-3 py-1.5">
-                          <p className="text-xs font-bold text-primary">💰 Số dư: <span className="text-yellow-500">{balance.toLocaleString("vi-VN")}đ</span></p>
-                        </div>
-                      )}
+                      <p className="text-sm font-semibold text-foreground">{displayName}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                     </div>
-                    <a href="/trang-ca-nhan" className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                      <User className="w-4 h-4" /> Trang cá nhân
-                    </a>
-                    <a href="/lich-su-mua" className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                      <ShoppingCart className="w-4 h-4" /> Đơn hàng của tôi
-                    </a>
+                    <a href="/trang-ca-nhan" className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted"><User className="w-4 h-4" /> Trang cá nhân</a>
+                    <a href="/lich-su-mua" className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted"><ShoppingCart className="w-4 h-4" /> Đơn hàng của tôi</a>
                     {isAdmin && (
-                      <a href="/admin" className="flex items-center gap-2 px-4 py-2.5 text-sm text-neon-orange hover:bg-muted transition-colors">
-                        <Shield className="w-4 h-4" /> Admin Panel
-                      </a>
-                    )}
-                    {isCTV && !isAdmin && (
-                      <a href="/ctv" className="flex items-center gap-2 px-4 py-2.5 text-sm text-primary hover:bg-muted transition-colors">
-                        <Package className="w-4 h-4" /> CTV
-                      </a>
+                      <a href="/admin" className="flex items-center gap-2 px-4 py-2.5 text-sm text-primary hover:bg-muted"><Shield className="w-4 h-4" /> Admin Panel</a>
                     )}
                     <div className="border-t border-border mt-1">
-                      <button onClick={() => { signOut(); setUserMenuOpen(false); }}
-                        className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-destructive hover:bg-muted transition-colors">
-                        <LogOut className="w-4 h-4" /> Đăng xuất
-                      </button>
+                      <button onClick={() => { signOut(); setUserMenuOpen(false); }} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-destructive hover:bg-muted"><LogOut className="w-4 h-4" /> Đăng xuất</button>
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              <a href="/dang-nhap" className="flex items-center gap-2 px-3 sm:px-4 py-2 gradient-primary rounded-lg font-semibold text-sm text-primary-foreground hover:opacity-90 transition-opacity">
-                <User className="w-4 h-4" />
-                <span className="hidden sm:inline">Đăng nhập</span>
+              <a href="/dang-nhap" className="flex items-center gap-2 px-4 h-11 brand-gradient rounded-xl font-semibold text-sm text-white hover:opacity-90 shadow-md">
+                <User className="w-4 h-4" /><span className="hidden sm:inline">Đăng nhập</span>
               </a>
             )}
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg bg-muted border border-border">
-              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+
+            <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden h-11 w-11 rounded-xl border border-border bg-card flex items-center justify-center">
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Nav with dropdowns */}
-        <nav className={`mt-3 ${mobileMenuOpen ? "flex flex-col" : "hidden"} md:flex md:flex-row md:items-center gap-2 pb-1 relative z-40`}>
-          {user && (
-            <button
-              onClick={() => navigate("/nap-the")}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 transition-colors shrink-0"
-              title="Nạp tiền"
-            >
-              <Wallet className="w-4 h-4 text-primary" />
-              <span className="text-xs font-semibold text-primary whitespace-nowrap">
-                Ví: <span className="text-yellow-500 font-bold">{(balance ?? 0).toLocaleString("vi-VN")}đ</span>
-              </span>
+        {/* Mobile search */}
+        <form onSubmit={handleSearch} className="md:hidden px-4 pb-3">
+          <div className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Tìm kiếm sản phẩm..."
+              className="w-full h-11 bg-muted/60 rounded-full pl-5 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+            <button type="submit" className="absolute right-1.5 top-1.5 h-8 w-8 rounded-full brand-gradient flex items-center justify-center">
+              <Search className="w-4 h-4 text-white" />
             </button>
-          )}
+          </div>
+        </form>
+      </div>
 
-          <button onClick={() => navigate("/")} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${currentPath === "/" ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
-            <Home className="w-4 h-4" /> Trang chủ
-          </button>
-
-          {/* Nạp tiền dropdown */}
-          <div className="relative" ref={topupRef}>
-            <button onClick={() => setTopupOpen(!topupOpen)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${isTopupActive ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
-              <CreditCard className="w-4 h-4" /> Nạp tiền
-              <ChevronDown className={`w-3 h-3 transition-transform ${topupOpen ? "rotate-180" : ""}`} />
-            </button>
-            {topupOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[200px] z-[100] animate-fade-in">
-                <div className="px-3 py-2 border-b border-border flex items-center gap-2 text-primary font-bold text-xs">
-                  <Landmark className="w-4 h-4" /> Chọn phương thức nạp
+      {/* Bottom nav row */}
+      <div className="bg-background border-b border-border">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4 flex-wrap">
+          <nav className={`${mobileOpen ? "flex flex-col w-full" : "hidden"} md:flex md:flex-row md:items-center gap-1`}>
+            <NavPill icon={Home} label="Trang chủ" path="/" active={currentPath === "/"} />
+            <NavPill icon={LayoutGrid} label="Sản phẩm" path="/?cat=all" />
+            <div className="relative" ref={topupRef}>
+              <button
+                onClick={() => setTopupOpen(!topupOpen)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all ${isTopupActive ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-primary/5 hover:text-primary"}`}
+              >
+                <CreditCard className="w-4 h-4" /> Nạp tiền
+                <span className="px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-gradient-to-r from-orange-500 to-red-500 text-white leading-none">HOT</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${topupOpen ? "rotate-180" : ""}`} />
+              </button>
+              {topupOpen && (
+                <div className="absolute top-full left-0 mt-2 bg-card border border-border rounded-xl shadow-lg py-1 min-w-[200px] z-50">
+                  <button onClick={() => { navigate("/nap-ngan-hang"); setTopupOpen(false); }} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm hover:bg-muted">
+                    <CreditCard className="w-4 h-4 text-primary" /> Ngân hàng
+                  </button>
+                  <button onClick={() => { navigate("/nap-the"); setTopupOpen(false); }} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm hover:bg-muted">
+                    <CreditCard className="w-4 h-4 text-primary" /> Thẻ cào
+                  </button>
                 </div>
-                <button onClick={() => { navigate("/nap-ngan-hang"); setTopupOpen(false); }}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                  <Landmark className="w-4 h-4 text-primary" /> Ngân hàng
-                </button>
-                <button onClick={() => { navigate("/nap-the"); setTopupOpen(false); }}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                  <Smartphone className="w-4 h-4 text-accent" /> Thẻ cào
-                </button>
-                <button onClick={() => { navigate("/nap-ngan-hang"); setTopupOpen(false); }}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                  <Wallet className="w-4 h-4 text-primary" /> ATM / Ví điện tử
-                </button>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+            <NavPill icon={Package} label="Đơn hàng" path="/lich-su-mua" active={currentPath.startsWith("/lich-su")} />
+            <NavPill icon={Newspaper} label="Blogs" path="/faq" active={currentPath === "/faq"} />
+            <NavPill icon={FileText} label="Quy định" path="/quy-dinh-nap-the" active={currentPath.startsWith("/quy-dinh")} />
+          </nav>
 
-          {/* Lịch sử dropdown */}
-          <div className="relative" ref={historyRef}>
-            <button onClick={() => setHistoryOpen(!historyOpen)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${isHistoryActive ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
-              <HistoryIcon className="w-4 h-4" /> Lịch sử
-              <ChevronDown className={`w-3 h-3 transition-transform ${historyOpen ? "rotate-180" : ""}`} />
-            </button>
-            {historyOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[220px] z-[100] animate-fade-in">
-                <button onClick={() => { navigate("/lich-su-mua"); setHistoryOpen(false); }}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                  <ShoppingCart className="w-4 h-4 text-primary" /> LSMH - Lịch sử mua hàng
-                </button>
-                <button onClick={() => { navigate("/lich-su-nap"); setHistoryOpen(false); }}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                  <Wallet className="w-4 h-4 text-primary" /> LSNT - Lịch sử nạp tiền
-                </button>
-                <button onClick={() => { navigate("/bien-dong-so-du"); setHistoryOpen(false); }}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                  <FileText className="w-4 h-4 text-primary" /> BDSD - Biến động số dư
-                </button>
-                <button onClick={() => { navigate("/lich-su-cay-thue"); setHistoryOpen(false); }}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                  <Package className="w-4 h-4 text-accent" /> LSCT - Lịch sử cày thuê
-                </button>
+          <div className="hidden lg:flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <div className="h-11 w-11 rounded-full brand-gradient flex items-center justify-center text-white shadow-md">
+                <Phone className="w-5 h-5" />
               </div>
-            )}
+              <div className="leading-tight">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Hotline 24/7</div>
+                <div className="text-sm font-bold text-foreground">{hotline}</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="h-11 w-11 rounded-full brand-gradient flex items-center justify-center text-white shadow-md">
+                <Mail className="w-5 h-5" />
+              </div>
+              <div className="leading-tight">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Email</div>
+                <div className="text-sm font-bold text-foreground">{email}</div>
+              </div>
+            </div>
           </div>
-
-          <button onClick={() => navigate("/quy-dinh-nap-the")} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${currentPath.startsWith("/quy-dinh-nap-the") ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
-            <FileText className="w-4 h-4" /> Quy định nạp thẻ
-          </button>
-          <button onClick={() => navigate("/faq")} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${currentPath.startsWith("/faq") ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
-            <HelpCircle className="w-4 h-4" /> FAQ
-          </button>
-        </nav>
+        </div>
       </div>
     </header>
   );
