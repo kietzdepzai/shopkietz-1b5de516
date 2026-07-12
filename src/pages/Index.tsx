@@ -28,18 +28,11 @@ type Category = { id: string; name: string; slug: string; image_url: string | nu
 
 const Index = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const { user, signOut } = useAuth();
   const [activeCategory, setActiveCategory] = useState(searchParams.get("cat") || "all");
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [navOpen, setNavOpen] = useState(false);
-  const [balance, setBalance] = useState<number>(0);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [userMenu, setUserMenu] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const s = searchParams.get("search");
@@ -61,18 +54,6 @@ const Index = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (!user) { setBalance(0); setIsAdmin(false); return; }
-    supabase.from("profiles").select("balance").eq("user_id", user.id).single().then(({ data }) => setBalance(data?.balance ?? 0));
-    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").then(({ data }) => setIsAdmin(!!(data && data.length > 0)));
-  }, [user]);
-
-  useEffect(() => {
-    const h = (e: MouseEvent) => { if (menuRef.current && !menuRef.current.contains(e.target as Node)) setUserMenu(false); };
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
-  }, []);
-
   const slugMap: Record<string, string> = {};
   const imgMap: Record<string, string | null> = {};
   categories.forEach(c => { slugMap[c.name] = c.slug; imgMap[c.name] = c.image_url; });
@@ -87,7 +68,6 @@ const Index = () => {
     grouped[p.category].push(p);
   });
 
-  const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
 
   return (
     <div className="min-h-screen bg-background">
