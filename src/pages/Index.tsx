@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import SideNav, { SideNavTrigger } from "@/components/SideNav";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import Header from "@/components/Header";
 import WelcomePanel from "@/components/WelcomePanel";
 import CategoryTabs from "@/components/CategoryTabs";
 import ProductSection from "@/components/ProductSection";
@@ -9,10 +9,9 @@ import RecentPurchases from "@/components/RecentPurchases";
 import RecentTopups from "@/components/RecentTopups";
 import Footer from "@/components/Footer";
 import WelcomePopup from "@/components/WelcomePopup";
-import ThemeToggle from "@/components/ThemeToggle";
-import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Bell, Wallet, Search, User as UserIcon, LogOut, Shield, ChevronDown } from "lucide-react";
+import { Loader2 } from "lucide-react";
+
 
 interface Product {
   id: string;
