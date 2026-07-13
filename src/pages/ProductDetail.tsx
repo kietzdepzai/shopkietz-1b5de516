@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Package, ShoppingCart, Loader2, AlertCircle, Clock, Pencil, Save, X, ImagePlus } from "lucide-react";
+import { ArrowLeft, Package, ShoppingCart, Loader2, AlertCircle, Clock, Pencil, Save, X, ImagePlus, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PurchaseConfirmDialog from "@/components/PurchaseConfirmDialog";
 import BoostPurchaseDialog from "@/components/BoostPurchaseDialog";
