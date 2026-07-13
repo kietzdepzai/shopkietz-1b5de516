@@ -16,23 +16,41 @@ const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
 const IMAGE_URL_REGEX = /https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg)(?:\?[^\s]*)?/gi;
 
 const DescriptionWithImages = ({ text }: { text: string }) => {
-  const parts = text.split(IMAGE_URL_REGEX);
-  const images = text.match(IMAGE_URL_REGEX) || [];
-  
+  // Split text into image URLs vs text lines while preserving order
+  const tokens: Array<{ type: "text" | "image"; value: string }> = [];
+  let lastIndex = 0;
+  const regex = new RegExp(IMAGE_URL_REGEX.source, "gi");
+  let m: RegExpExecArray | null;
+  while ((m = regex.exec(text)) !== null) {
+    if (m.index > lastIndex) tokens.push({ type: "text", value: text.slice(lastIndex, m.index) });
+    tokens.push({ type: "image", value: m[0] });
+    lastIndex = m.index + m[0].length;
+  }
+  if (lastIndex < text.length) tokens.push({ type: "text", value: text.slice(lastIndex) });
+
   return (
-    <div className="text-sm text-foreground space-y-2">
-      {parts.map((part, i) => (
-        <span key={i}>
-          {part.split('\n').map((line, j) => (
-            <span key={j}>{j > 0 && <br />}{line}</span>
-          ))}
-          {images[i] && (
-            <a href={images[i]} target="_blank" rel="noopener noreferrer" className="block my-2">
-              <img src={images[i]} alt="Ảnh sản phẩm" className="max-w-full rounded-lg border border-border max-h-64 object-contain" />
+    <div className="space-y-2">
+      {tokens.map((tok, i) => {
+        if (tok.type === "image") {
+          return (
+            <a key={i} href={tok.value} target="_blank" rel="noopener noreferrer" className="block my-2">
+              <img src={tok.value} alt="Ảnh sản phẩm" className="max-w-full rounded-lg border border-border max-h-72 object-contain" />
             </a>
-          )}
-        </span>
-      ))}
+          );
+        }
+        const lines = tok.value.split("\n").map((l) => l.trim()).filter(Boolean);
+        if (!lines.length) return null;
+        return (
+          <ul key={i} className="space-y-1.5">
+            {lines.map((line, j) => (
+              <li key={j} className="flex items-start gap-2 text-sm text-foreground">
+                <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <span className="leading-snug">{line}</span>
+              </li>
+            ))}
+          </ul>
+        );
+      })}
     </div>
   );
 };
