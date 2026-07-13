@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Package, ShoppingCart, Loader2, AlertCircle, Clock, Pencil, Save, X, ImagePlus } from "lucide-react";
+import { ArrowLeft, Package, ShoppingCart, Loader2, AlertCircle, Clock, Pencil, Save, X, ImagePlus, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PurchaseConfirmDialog from "@/components/PurchaseConfirmDialog";
 import BoostPurchaseDialog from "@/components/BoostPurchaseDialog";
@@ -16,23 +16,41 @@ const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
 const IMAGE_URL_REGEX = /https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg)(?:\?[^\s]*)?/gi;
 
 const DescriptionWithImages = ({ text }: { text: string }) => {
-  const parts = text.split(IMAGE_URL_REGEX);
-  const images = text.match(IMAGE_URL_REGEX) || [];
-  
+  // Split text into image URLs vs text lines while preserving order
+  const tokens: Array<{ type: "text" | "image"; value: string }> = [];
+  let lastIndex = 0;
+  const regex = new RegExp(IMAGE_URL_REGEX.source, "gi");
+  let m: RegExpExecArray | null;
+  while ((m = regex.exec(text)) !== null) {
+    if (m.index > lastIndex) tokens.push({ type: "text", value: text.slice(lastIndex, m.index) });
+    tokens.push({ type: "image", value: m[0] });
+    lastIndex = m.index + m[0].length;
+  }
+  if (lastIndex < text.length) tokens.push({ type: "text", value: text.slice(lastIndex) });
+
   return (
-    <div className="text-sm text-foreground space-y-2">
-      {parts.map((part, i) => (
-        <span key={i}>
-          {part.split('\n').map((line, j) => (
-            <span key={j}>{j > 0 && <br />}{line}</span>
-          ))}
-          {images[i] && (
-            <a href={images[i]} target="_blank" rel="noopener noreferrer" className="block my-2">
-              <img src={images[i]} alt="Ảnh sản phẩm" className="max-w-full rounded-lg border border-border max-h-64 object-contain" />
+    <div className="space-y-2">
+      {tokens.map((tok, i) => {
+        if (tok.type === "image") {
+          return (
+            <a key={i} href={tok.value} target="_blank" rel="noopener noreferrer" className="block my-2">
+              <img src={tok.value} alt="Ảnh sản phẩm" className="max-w-full rounded-lg border border-border max-h-72 object-contain" />
             </a>
-          )}
-        </span>
-      ))}
+          );
+        }
+        const lines = tok.value.split("\n").map((l) => l.trim()).filter(Boolean);
+        if (!lines.length) return null;
+        return (
+          <ul key={i} className="space-y-1.5">
+            {lines.map((line, j) => (
+              <li key={j} className="flex items-start gap-2 text-sm text-foreground">
+                <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <span className="leading-snug">{line}</span>
+              </li>
+            ))}
+          </ul>
+        );
+      })}
     </div>
   );
 };
@@ -42,6 +60,7 @@ const ProductDetail = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [product, setProduct] = useState<any>(null);
+  const [soldCount, setSoldCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -58,6 +77,12 @@ const ProductDetail = () => {
       const { data } = await supabase.from("products").select("*").eq("id", id!).single();
       setProduct(data);
       if (data) setEditForm(data);
+      const { count } = await supabase
+        .from("product_accounts")
+        .select("*", { count: "exact", head: true })
+        .eq("product_id", id!)
+        .eq("is_sold", true);
+      setSoldCount(count || 0);
       setLoading(false);
     };
     if (id) fetchProduct();
@@ -162,27 +187,19 @@ const ProductDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <TopBar /><Header />
-      <main className="container mx-auto px-4 py-8 max-w-2xl space-y-6">
+      <main className="container mx-auto px-4 py-8 max-w-3xl space-y-6">
         <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-4 h-4" /> Quay lại cửa hàng
         </Link>
 
-        <div className="bg-card border border-primary/20 rounded-xl overflow-hidden neon-card animate-slide-up">
-          {/* Header */}
-          <div className="gradient-primary px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Package className="w-6 h-6 text-primary-foreground" />
-              <span className="text-sm font-bold text-primary-foreground uppercase tracking-wider">{editing ? editForm.category : product.category}</span>
+        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-lg animate-slide-up">
+          {isAdmin && !editing && (
+            <div className="flex justify-end px-6 pt-4">
+              <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg bg-muted hover:bg-border transition-colors" title="Chỉnh sửa">
+                <Pencil className="w-4 h-4 text-foreground" />
+              </button>
             </div>
-            <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-primary-foreground">{product.product_type === "boost" ? "Dịch vụ cày thuê" : `Kho: ${editing ? editForm.stock : product.stock}`}</span>
-              {isAdmin && !editing && (
-                <button onClick={() => setEditing(true)} className="ml-2 p-1.5 rounded-lg bg-primary-foreground/20 hover:bg-primary-foreground/30 transition-colors">
-                  <Pencil className="w-4 h-4 text-primary-foreground" />
-                </button>
-              )}
-            </div>
-          </div>
+          )}
 
           <div className="p-6 space-y-5">
             {editing ? (
@@ -260,72 +277,84 @@ const ProductDetail = () => {
               </div>
             ) : (
               <>
-                <h1 className="font-display text-xl font-bold text-foreground">{product.name}</h1>
-                
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center py-3 border-b border-border">
-                    <span className="text-sm text-muted-foreground">Danh mục</span>
-                    <span className="px-3 py-1 bg-muted rounded-lg text-xs font-semibold text-foreground">{product.category}</span>
-                  </div>
-                  <div className="flex justify-between items-center py-3 border-b border-border">
-                    <span className="text-sm text-muted-foreground">Giá</span>
-                    {user ? (
-                      <span className="text-xl font-semibold text-yellow-500">{formatVND(product.price)}</span>
-                    ) : (
-                      <Link to="/dang-nhap" className="text-sm text-primary hover:underline italic">Đăng nhập để xem giá</Link>
-                    )}
-                  </div>
-                  <div className="flex justify-between items-center py-3 border-b border-border">
-                    <span className="text-sm text-muted-foreground">Tồn kho</span>
-                    <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
-                      <Package className="w-4 h-4 text-muted-foreground" /> {product.product_type === "boost" ? "Không cần kho" : `${product.stock} sản phẩm`}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center py-3 border-b border-border">
-                    <span className="text-sm text-muted-foreground">Trạng thái</span>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${product.product_type === "boost" ? "bg-accent/10 text-accent border border-accent/30" : product.stock > 0 ? "bg-primary/10 text-primary border border-primary/30" : "bg-destructive/10 text-destructive border border-destructive/30"}`}>
-                      {product.product_type === "boost" ? "Nhận đơn cày thuê" : product.stock > 0 ? "Còn hàng" : "Hết hàng"}
-                    </span>
-                  </div>
-                  {product.created_at && (
-                    <div className="flex justify-between items-center py-3 border-b border-border">
-                      <span className="text-sm text-muted-foreground">Ngày đăng</span>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="w-3 h-3" />{new Date(product.created_at).toLocaleString("vi-VN")}</span>
+                {/* Title with product image icon */}
+                <div className="flex items-center gap-3">
+                  {product.image_url ? (
+                    <img src={product.image_url} alt={product.name} className="w-11 h-11 rounded-lg object-cover border border-border shrink-0" />
+                  ) : (
+                    <div className="w-11 h-11 rounded-lg bg-muted border border-border flex items-center justify-center shrink-0">
+                      <Package className="w-5 h-5 text-muted-foreground" />
                     </div>
                   )}
+                  <h1 className="font-display text-2xl font-extrabold text-foreground leading-tight">{product.name}</h1>
                 </div>
 
+                {/* Info pills */}
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-md bg-fuchsia-600 text-white text-xs font-bold shadow-sm">
+                    Kho hàng: <span className="ml-1 font-extrabold">{product.product_type === "boost" ? "∞" : product.stock.toLocaleString("vi-VN")}</span>
+                  </span>
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-md bg-teal-500 text-white text-xs font-bold shadow-sm">
+                    Đã bán: <span className="ml-1 font-extrabold">{soldCount}</span>
+                  </span>
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-md bg-muted text-foreground text-xs font-bold border border-border">
+                    {product.category}
+                  </span>
+                  <span className={`inline-flex items-center px-3 py-1.5 rounded-md text-xs font-bold border ${product.product_type === "boost" ? "bg-accent/10 text-accent border-accent/30" : product.stock > 0 ? "bg-primary/10 text-primary border-primary/30" : "bg-destructive/10 text-destructive border-destructive/30"}`}>
+                    {product.product_type === "boost" ? "Nhận đơn cày thuê" : product.stock > 0 ? "Còn hàng" : "Hết hàng"}
+                  </span>
+                </div>
+
+                {/* Price */}
+                {user ? (
+                  <div className="text-3xl font-extrabold text-primary">{formatVND(product.price)}</div>
+                ) : (
+                  <Link to="/dang-nhap" className="inline-block text-base text-primary hover:underline italic">Đăng nhập để xem giá</Link>
+                )}
+
+                {/* Description with images */}
                 {product.description && (
-                  <div className="bg-muted border border-border rounded-xl p-4">
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">Mô tả:</p>
+                  <div className="pt-2">
                     <DescriptionWithImages text={product.description} />
                   </div>
                 )}
 
-                {user ? (
-                  product.product_type === "boost" ? (
-                    <button
-                      onClick={() => setShowBoost(true)}
-                      disabled={buying}
-                      className="w-full py-3 galaxy-button text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
-                    >
-                      <ShoppingCart className="w-5 h-5" /> Đặt dịch vụ cày thuê
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setShowConfirm(true)}
-                      disabled={buying || product.stock <= 0}
-                      className="w-full py-3 galaxy-button text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
-                    >
-                      <ShoppingCart className="w-5 h-5" />
-                      {product.stock <= 0 ? "Hết hàng" : "Mua ngay"}
-                    </button>
-                  )
-                ) : (
-                  <Link to="/dang-nhap" className="w-full py-3 gradient-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-                    <ShoppingCart className="w-5 h-5" /> Đăng nhập để mua
-                  </Link>
+                {product.created_at && (
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> Ngày đăng: {new Date(product.created_at).toLocaleString("vi-VN")}
+                  </p>
                 )}
+
+                {/* Actions */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  {user ? (
+                    product.product_type === "boost" ? (
+                      <button
+                        onClick={() => setShowBoost(true)}
+                        disabled={buying}
+                        className="w-full py-3 gradient-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
+                      >
+                        <ShoppingCart className="w-5 h-5" /> ĐẶT CÀY THUÊ
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setShowConfirm(true)}
+                        disabled={buying || product.stock <= 0}
+                        className="w-full py-3 gradient-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
+                      >
+                        <ShoppingCart className="w-5 h-5" />
+                        {product.stock <= 0 ? "HẾT HÀNG" : "MUA NGAY"}
+                      </button>
+                    )
+                  ) : (
+                    <Link to="/dang-nhap" className="w-full py-3 gradient-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-md">
+                      <ShoppingCart className="w-5 h-5" /> ĐĂNG NHẬP ĐỂ MUA
+                    </Link>
+                  )}
+                  <Link to="/" className="w-full py-3 bg-muted text-foreground rounded-xl text-sm font-bold hover:bg-border transition-colors flex items-center justify-center gap-2 border border-border">
+                    <ArrowLeft className="w-5 h-5" /> QUAY LẠI
+                  </Link>
+                </div>
               </>
             )}
           </div>
