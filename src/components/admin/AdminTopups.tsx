@@ -65,7 +65,7 @@ const AdminTopups = () => {
         title: "✅ Đã duyệt — Cộng tiền thành công",
         description: isCard
           ? `Mệnh giá ${formatVND(amount)} → Thực cộng ${formatVND(creditAmount)} (thuế 20%)`
-          : `Nạp ${formatVND(amount)} → Thực cộng ${formatVND(creditAmount)} (bonus ${amount >= 50000 ? "+5%" : "+10%"})`,
+          : `Nạp ${formatVND(amount)} → Thực cộng ${formatVND(creditAmount)} (bonus +${(bonusRateFor(amount) * 100).toFixed(0)}%)`,
       });
     } else {
       toast({ title: "❌ Đã từ chối", description: `Yêu cầu nạp ${formatVND(amount)} đã bị từ chối.`, variant: "destructive" });
