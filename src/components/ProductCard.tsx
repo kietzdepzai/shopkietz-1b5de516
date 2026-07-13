@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ShoppingCart, Eye, Package, Loader2, CheckCircle2 } from "lucide-react";
+import { ShoppingCart, Eye, Loader2, CheckCircle2, Package } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -39,6 +39,13 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
   const [showBoost, setShowBoost] = useState(false);
   const isBoost = product_type === "boost";
 
+  // Auto-generate short tags from description lines (max 3 items)
+  const tags = description
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .slice(0, 3);
+
   const handleBoostBuy = async (username: string, password: string, note: string) => {
     if (!user || !id) return;
     if (!username || !password) {
@@ -59,20 +66,10 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
     window.location.href = "/lich-su-cay-thue";
   };
 
-
   const handleBuy = async (quantity: number, discountCode?: string) => {
-    if (!user) {
-      toast({ title: "Vui lòng đăng nhập", variant: "destructive" });
-      return;
-    }
-    if (!id) {
-      toast({ title: "Lỗi sản phẩm", variant: "destructive" });
-      return;
-    }
-    if (stock <= 0) {
-      toast({ title: "Hết hàng", variant: "destructive" });
-      return;
-    }
+    if (!user) { toast({ title: "Vui lòng đăng nhập", variant: "destructive" }); return; }
+    if (!id) { toast({ title: "Lỗi sản phẩm", variant: "destructive" }); return; }
+    if (stock <= 0) { toast({ title: "Hết hàng", variant: "destructive" }); return; }
     setBuying(true);
     setShowConfirm(false);
 
@@ -83,20 +80,10 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
       p_discount_code: discountCode || null,
     });
 
-    if (error) {
-      toast({ title: "Lỗi", description: error.message, variant: "destructive" });
-      setBuying(false);
-      return;
-    }
+    if (error) { toast({ title: "Lỗi", description: error.message, variant: "destructive" }); setBuying(false); return; }
 
     const result = data as any;
-    if (!result.success) {
-      toast({ title: "❌ " + result.error, variant: "destructive" });
-      setBuying(false);
-      return;
-    }
-
-
+    if (!result.success) { toast({ title: "❌ " + result.error, variant: "destructive" }); setBuying(false); return; }
 
     setBuying(false);
     setPurchasedQuantity(result.quantity || quantity);
@@ -107,61 +94,82 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
 
   return (
     <>
-      <div className={`bg-card border rounded-md overflow-hidden hover:neon-card transition-all duration-300 group ${isBoost ? "border-accent/50 neon-purple" : "border-border hover:border-primary/50"}`}>
-        <div className={`${isBoost ? "gradient-accent" : "bg-muted"} px-4 py-4 flex items-center gap-3 border-b border-border`}>
-          {imageUrl && <img src={imageUrl} alt={name} className="w-12 h-12 rounded object-cover border border-border shrink-0" />}
-          <h3 className="font-semibold text-foreground text-base leading-snug line-clamp-2 group-hover:text-primary transition-colors">{name}</h3>
+      <div className={`group relative flex flex-col bg-card border rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${isBoost ? "border-accent/50" : "border-border hover:border-primary/60"}`}>
+        {/* Image */}
+        <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-muted to-background">
+          {imageUrl ? (
+            <img src={imageUrl} alt={name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+              <Package className="w-16 h-16 opacity-30" />
+            </div>
+          )}
+
+          {/* Stock badge */}
+          <div className="absolute top-2 left-2">
+            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-bold shadow-md ${isBoost ? "bg-accent text-accent-foreground" : stock > 0 ? "bg-primary text-primary-foreground" : "bg-destructive text-destructive-foreground"}`}>
+              {isBoost ? "Cày thuê" : stock > 0 ? `Còn ${stock}` : "Hết hàng"}
+            </span>
+          </div>
+
+          {/* Country flag */}
+          <div className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/90 backdrop-blur flex items-center justify-center text-sm shadow-md">
+            🇻🇳
+          </div>
         </div>
 
-        {imageUrl && (
-          <div className="aspect-video w-full overflow-hidden bg-muted hidden">
-            <img src={imageUrl} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-          </div>
-        )}
+        {/* Content */}
+        <div className="flex flex-col flex-1 p-3 space-y-2.5">
+          {/* Name */}
+          <h3 className="font-bold text-foreground text-sm leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors">
+            {name}
+          </h3>
 
-        <div className="p-4 space-y-4">
-          <ul className="space-y-1.5 min-h-[88px]">
-            {description.split("\n").map((line, idx) => {
-              const t = line.trim();
-              if (!t) return null;
-              return (
-                <li key={idx} className="flex items-start gap-2 text-sm text-foreground">
-                  <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                  <span className="leading-snug">{t}</span>
-                </li>
-              );
-            })}
-          </ul>
-
-          <div className="grid grid-cols-3 items-center text-center border-y border-border py-3 gap-2">
-            <div className="space-y-1 border-r border-border"><p className="text-xs font-bold text-foreground">Quốc gia</p><p className="text-lg">🇻🇳</p></div>
-            <div className="space-y-1 border-r border-border"><p className="text-xs font-bold text-foreground">Hiện có</p><span className="inline-flex w-6 h-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">{isBoost ? "∞" : stock}</span></div>
-            <div className="space-y-1"><p className="text-xs font-bold text-foreground">Giá</p><span className="text-lg font-semibold text-yellow-500">{user ? price : "Ẩn"}</span></div>
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1.5 min-h-[22px]">
+            {tags.map((t, idx) => (
+              <span
+                key={idx}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[11px] font-semibold leading-tight"
+              >
+                <CheckCircle2 className="w-3 h-3" />
+                <span className="truncate max-w-[140px]">{t}</span>
+              </span>
+            ))}
           </div>
 
-          <div className="space-y-2">
-            <div className="grid grid-cols-[auto_1fr] gap-2">
-              {id && (
-                <Link to={`/san-pham/${id}`} className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-muted border border-border hover:bg-border transition-colors text-sm font-semibold text-foreground" title="Chi tiết">
-                  <Eye className="w-4 h-4 text-muted-foreground" /> Hình ảnh mô tả
-                </Link>
-              )}
-              {user ? (
-                <button
-                  onClick={() => isBoost ? setShowBoost(true) : setShowConfirm(true)}
-                  disabled={buying || (!isBoost && stock <= 0)}
-                  className="flex items-center justify-center gap-1.5 px-3 py-2 galaxy-button rounded-full text-sm font-bold text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
-                >
-                  {buying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />}
-                  {buying ? "Đang xử lý..." : !isBoost && stock <= 0 ? "Hết hàng" : isBoost ? "Đặt cày" : "Mua ngay"}
-                </button>
+          {/* Price */}
+          <div className="flex items-baseline justify-between pt-1 border-t border-border">
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Giá bán</span>
+            <span className="text-lg font-extrabold text-yellow-500 leading-none">
+              {user ? price : "Đăng nhập"}
+            </span>
+          </div>
 
-              ) : (
-                <Link to="/dang-nhap" className="flex items-center gap-1.5 px-3 py-2 galaxy-button rounded-lg text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">
-                  <ShoppingCart className="w-3.5 h-3.5" /> Đăng nhập
-                </Link>
-              )}
-            </div>
+          {/* Actions */}
+          <div className="grid grid-cols-2 gap-2 pt-1 mt-auto">
+            {id ? (
+              <Link
+                to={`/san-pham/${id}`}
+                className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg bg-muted border border-border hover:bg-border transition-colors text-xs font-semibold text-foreground"
+              >
+                <Eye className="w-3.5 h-3.5" /> Chi tiết
+              </Link>
+            ) : <span />}
+            {user ? (
+              <button
+                onClick={() => isBoost ? setShowBoost(true) : setShowConfirm(true)}
+                disabled={buying || (!isBoost && stock <= 0)}
+                className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-bold disabled:opacity-50"
+              >
+                {buying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />}
+                {buying ? "..." : !isBoost && stock <= 0 ? "Hết" : isBoost ? "Đặt cày" : "Mua ngay"}
+              </button>
+            ) : (
+              <Link to="/dang-nhap" className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-bold">
+                <ShoppingCart className="w-3.5 h-3.5" /> Đăng nhập
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -186,8 +194,6 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
         buying={buying}
       />
 
-
-      {/* Success dialog - account info hidden */}
       {showAccDialog && (
         <Dialog open={showAccDialog} onOpenChange={setShowAccDialog}>
           <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
@@ -212,11 +218,11 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
             </div>
             <DialogFooter className="flex flex-col sm:flex-row gap-2">
               <Link to={`/don-hang/${purchasedOrderId}`} onClick={() => setShowAccDialog(false)}
-                className="flex items-center justify-center gap-2 px-4 py-2 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
                 <Eye className="w-4 h-4" /> Xem chi tiết
               </Link>
               <button onClick={() => { setShowAccDialog(false); window.location.reload(); }}
-                className="px-4 py-2 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
                 Mua thêm
               </button>
               <Link to="/lich-su-mua" onClick={() => setShowAccDialog(false)}
