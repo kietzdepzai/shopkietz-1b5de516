@@ -71,12 +71,13 @@ const Profile = () => {
     <div className="min-h-screen bg-background">
       <TopBar />
       <Header />
-      <main className="container mx-auto px-4 py-6 max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-5">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-4 sm:gap-5">
           {/* LEFT — User card */}
           <div className="bg-card border border-border rounded-xl overflow-hidden neon-card">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-700 p-6 text-center">
-              <div className="w-24 h-24 rounded-full bg-white mx-auto overflow-hidden border-4 border-white/30 flex items-center justify-center text-3xl font-bold text-blue-700">
+            <div className="bg-gradient-to-br from-blue-500 to-blue-700 p-5 sm:p-6 text-center">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white mx-auto overflow-hidden border-4 border-white/30 flex items-center justify-center text-3xl font-bold text-blue-700">
+
                 {profile?.avatar_url
                   ? <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" />
                   : (username || "U").charAt(0).toUpperCase()}
