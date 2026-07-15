@@ -23,11 +23,24 @@ const Header = () => {
   const [hotline, setHotline] = useState("0967319920");
   const [email, setEmail] = useState("support@shopkietz.com");
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isTouch, setIsTouch] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const topupRef = useRef<HTMLDivElement>(null);
   const productRef = useRef<HTMLDivElement>(null);
+  const userMenuTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const topupTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const productTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearHoverTimer = (timer: React.MutableRefObject<ReturnType<typeof setTimeout> | null>) => {
+    if (timer.current) { clearTimeout(timer.current); timer.current = null; }
+  };
+  const delayClose = (timer: React.MutableRefObject<ReturnType<typeof setTimeout> | null>, setter: (v: boolean) => void) => {
+    clearHoverTimer(timer);
+    timer.current = setTimeout(() => setter(false), 180);
+  };
 
   useEffect(() => {
+    setIsTouch(window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window);
     supabase.from("shop_settings").select("key,value").in("key", ["shop_logo_url", "shop_hotline", "shop_email"]).then(({ data }) => {
       data?.forEach((r) => {
         if (r.key === "shop_logo_url" && r.value) setLogoUrl(r.value);
@@ -152,7 +165,7 @@ const Header = () => {
             </a>
 
             {user ? (
-              <div className="relative" ref={userMenuRef} onMouseEnter={() => setUserMenuOpen(true)} onMouseLeave={() => setUserMenuOpen(false)}>
+              <div className="relative" ref={userMenuRef} onMouseEnter={isTouch ? undefined : () => { clearHoverTimer(userMenuTimer); setUserMenuOpen(true); }} onMouseLeave={isTouch ? undefined : () => delayClose(userMenuTimer, setUserMenuOpen)}>
                 <button onClick={() => setUserMenuOpen(!userMenuOpen)} className="flex items-center gap-2.5 pl-1 pr-3 h-11 rounded-xl border border-border bg-card hover:bg-muted transition-colors">
                   <div className="w-9 h-9 rounded-lg brand-gradient flex items-center justify-center text-white text-sm font-bold overflow-hidden">
                     {displayName.charAt(0).toUpperCase()}
@@ -164,18 +177,20 @@ const Header = () => {
                   <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground transition-transform ${userMenuOpen ? "rotate-180" : ""}`} />
                 </button>
                 {userMenuOpen && (
-                  <div className="absolute top-full right-0 mt-2 bg-card border border-border rounded-xl shadow-lg py-1 min-w-[220px] z-50 animate-fade-in">
-                    <div className="px-4 py-2.5 border-b border-border">
-                      <p className="text-sm font-semibold text-foreground">{displayName}</p>
-                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                    </div>
-                    <a href="/trang-ca-nhan" className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted"><User className="w-4 h-4" /> Trang cá nhân</a>
-                    <a href="/lich-su-mua" className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted"><ShoppingCart className="w-4 h-4" /> Đơn hàng của tôi</a>
-                    {isAdmin && (
-                      <a href="/admin" className="flex items-center gap-2 px-4 py-2.5 text-sm text-primary hover:bg-muted"><Shield className="w-4 h-4" /> Admin Panel</a>
-                    )}
-                    <div className="border-t border-border mt-1">
-                      <button onClick={() => { signOut(); setUserMenuOpen(false); }} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-destructive hover:bg-muted"><LogOut className="w-4 h-4" /> Đăng xuất</button>
+                  <div className="absolute top-full right-0 pt-2 z-50">
+                    <div className="bg-card border border-border rounded-xl shadow-lg py-1 min-w-[220px] animate-fade-in">
+                      <div className="px-4 py-2.5 border-b border-border">
+                        <p className="text-sm font-semibold text-foreground">{displayName}</p>
+                        <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                      </div>
+                      <a href="/trang-ca-nhan" className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted"><User className="w-4 h-4" /> Trang cá nhân</a>
+                      <a href="/lich-su-mua" className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted"><ShoppingCart className="w-4 h-4" /> Đơn hàng của tôi</a>
+                      {isAdmin && (
+                        <a href="/admin" className="flex items-center gap-2 px-4 py-2.5 text-sm text-primary hover:bg-muted"><Shield className="w-4 h-4" /> Admin Panel</a>
+                      )}
+                      <div className="border-t border-border mt-1">
+                        <button onClick={() => { signOut(); setUserMenuOpen(false); }} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-destructive hover:bg-muted"><LogOut className="w-4 h-4" /> Đăng xuất</button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -214,7 +229,7 @@ const Header = () => {
         <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4 flex-wrap">
           <nav className={`${mobileOpen ? "flex flex-col w-full" : "hidden"} md:flex md:flex-row md:items-center gap-1`}>
             <NavPill icon={Home} label="Trang chủ" path="/" active={currentPath === "/"} />
-            <div className="relative" ref={productRef} onMouseEnter={() => setProductOpen(true)} onMouseLeave={() => setProductOpen(false)}>
+            <div className="relative" ref={productRef} onMouseEnter={isTouch ? undefined : () => { clearHoverTimer(productTimer); setProductOpen(true); }} onMouseLeave={isTouch ? undefined : () => delayClose(productTimer, setProductOpen)}>
               <button
                 onClick={() => setProductOpen(!productOpen)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all ${currentPath === "/" && new URLSearchParams(location.search).get("cat") === "all" ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-primary/5 hover:text-primary"}`}
@@ -223,42 +238,44 @@ const Header = () => {
                 <ChevronDown className={`w-3 h-3 transition-transform ${productOpen ? "rotate-180" : ""}`} />
               </button>
               {productOpen && (
-                <div className="absolute top-full left-0 mt-2 bg-card border border-border rounded-xl shadow-lg py-2 min-w-[260px] max-w-[320px] z-50 animate-fade-in">
-                  <div className="px-3 pb-2 border-b border-border mb-1">
-                    <span className="text-xs font-bold uppercase tracking-wider text-primary">Danh mục sản phẩm</span>
-                  </div>
-                  {categories.length === 0 ? (
-                    <div className="px-4 py-3 text-sm text-muted-foreground">Chưa có danh mục nào.</div>
-                  ) : (
-                    <div className="grid grid-cols-1 gap-0.5 max-h-[360px] overflow-y-auto">
-                      {categories.map((cat) => (
-                        <button
-                          key={cat.id}
-                          onClick={() => { navigate(`/?cat=${cat.slug}`); setProductOpen(false); }}
-                          className="flex items-center gap-3 w-full px-3 py-2 text-sm text-foreground hover:bg-muted rounded-lg text-left"
-                        >
-                          {cat.image_url ? (
-                            <img src={cat.image_url} alt={cat.name} className="w-7 h-7 object-contain rounded" onError={(e) => { e.currentTarget.style.display = "none"; }} />
-                          ) : (
-                            <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center"><Gamepad2 className="w-4 h-4 text-primary" /></div>
-                          )}
-                          <span className="font-medium truncate">{cat.name}</span>
-                        </button>
-                      ))}
+                <div className="absolute top-full left-0 pt-2 z-50">
+                  <div className="bg-card border border-border rounded-xl shadow-lg py-2 min-w-[260px] max-w-[320px] animate-fade-in">
+                    <div className="px-3 pb-2 border-b border-border mb-1">
+                      <span className="text-xs font-bold uppercase tracking-wider text-primary">Danh mục sản phẩm</span>
                     </div>
-                  )}
-                  <div className="border-t border-border mt-1 pt-1">
-                    <button
-                      onClick={() => { navigate("/?cat=all"); setProductOpen(false); }}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm font-semibold text-primary hover:bg-muted rounded-lg"
-                    >
-                      <LayoutGrid className="w-4 h-4" /> Xem tất cả sản phẩm
-                    </button>
+                    {categories.length === 0 ? (
+                      <div className="px-4 py-3 text-sm text-muted-foreground">Chưa có danh mục nào.</div>
+                    ) : (
+                      <div className="grid grid-cols-1 gap-0.5 max-h-[360px] overflow-y-auto">
+                        {categories.map((cat) => (
+                          <button
+                            key={cat.id}
+                            onClick={() => { navigate(`/?cat=${cat.slug}`); setProductOpen(false); }}
+                            className="flex items-center gap-3 w-full px-3 py-2 text-sm text-foreground hover:bg-muted rounded-lg text-left"
+                          >
+                            {cat.image_url ? (
+                              <img src={cat.image_url} alt={cat.name} className="w-7 h-7 object-contain rounded" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                            ) : (
+                              <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center"><Gamepad2 className="w-4 h-4 text-primary" /></div>
+                            )}
+                            <span className="font-medium truncate">{cat.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <div className="border-t border-border mt-1 pt-1">
+                      <button
+                        onClick={() => { navigate("/?cat=all"); setProductOpen(false); }}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-sm font-semibold text-primary hover:bg-muted rounded-lg"
+                      >
+                        <LayoutGrid className="w-4 h-4" /> Xem tất cả sản phẩm
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
             </div>
-            <div className="relative" ref={topupRef} onMouseEnter={() => setTopupOpen(true)} onMouseLeave={() => setTopupOpen(false)}>
+            <div className="relative" ref={topupRef} onMouseEnter={isTouch ? undefined : () => { clearHoverTimer(topupTimer); setTopupOpen(true); }} onMouseLeave={isTouch ? undefined : () => delayClose(topupTimer, setTopupOpen)}>
               <button
                 onClick={() => setTopupOpen(!topupOpen)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all ${isTopupActive ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-primary/5 hover:text-primary"}`}
@@ -268,13 +285,15 @@ const Header = () => {
                 <ChevronDown className={`w-3 h-3 transition-transform ${topupOpen ? "rotate-180" : ""}`} />
               </button>
               {topupOpen && (
-                <div className="absolute top-full left-0 mt-2 bg-card border border-border rounded-xl shadow-lg py-1 min-w-[200px] z-50">
-                  <button onClick={() => { navigate("/nap-ngan-hang"); setTopupOpen(false); }} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm hover:bg-muted">
-                    <CreditCard className="w-4 h-4 text-primary" /> Ngân hàng
-                  </button>
-                  <button onClick={() => { navigate("/nap-the"); setTopupOpen(false); }} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm hover:bg-muted">
-                    <CreditCard className="w-4 h-4 text-primary" /> Thẻ cào
-                  </button>
+                <div className="absolute top-full left-0 pt-2 z-50">
+                  <div className="bg-card border border-border rounded-xl shadow-lg py-1 min-w-[200px]">
+                    <button onClick={() => { navigate("/nap-ngan-hang"); setTopupOpen(false); }} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm hover:bg-muted">
+                      <CreditCard className="w-4 h-4 text-primary" /> Ngân hàng
+                    </button>
+                    <button onClick={() => { navigate("/nap-the"); setTopupOpen(false); }} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm hover:bg-muted">
+                      <CreditCard className="w-4 h-4 text-primary" /> Thẻ cào
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
