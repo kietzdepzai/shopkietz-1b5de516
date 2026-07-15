@@ -15,14 +15,17 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [topupOpen, setTopupOpen] = useState(false);
+  const [productOpen, setProductOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [hotline, setHotline] = useState("0967319920");
   const [email, setEmail] = useState("support@shopkietz.com");
+  const [categories, setCategories] = useState<Category[]>([]);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const topupRef = useRef<HTMLDivElement>(null);
+  const productRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     supabase.from("shop_settings").select("key,value").in("key", ["shop_logo_url", "shop_hotline", "shop_email"]).then(({ data }) => {
