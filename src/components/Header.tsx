@@ -35,6 +35,9 @@ const Header = () => {
         if (r.key === "shop_email" && r.value) setEmail(r.value);
       });
     });
+    supabase.from("categories").select("id,name,slug,image_url").order("sort_order").then(({ data }) => {
+      setCategories((data as Category[]) || []);
+    });
   }, []);
 
   useEffect(() => {
@@ -51,6 +54,7 @@ const Header = () => {
     const handleClick = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
       if (topupRef.current && !topupRef.current.contains(e.target as Node)) setTopupOpen(false);
+      if (productRef.current && !productRef.current.contains(e.target as Node)) setProductOpen(false);
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
