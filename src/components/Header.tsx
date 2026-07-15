@@ -40,6 +40,7 @@ const Header = () => {
   };
 
   useEffect(() => {
+    setIsTouch(window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window);
     supabase.from("shop_settings").select("key,value").in("key", ["shop_logo_url", "shop_hotline", "shop_email"]).then(({ data }) => {
       data?.forEach((r) => {
         if (r.key === "shop_logo_url" && r.value) setLogoUrl(r.value);
