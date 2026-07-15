@@ -236,37 +236,39 @@ const Header = () => {
                 <ChevronDown className={`w-3 h-3 transition-transform ${productOpen ? "rotate-180" : ""}`} />
               </button>
               {productOpen && (
-                <div className="absolute top-full left-0 mt-2 bg-card border border-border rounded-xl shadow-lg py-2 min-w-[260px] max-w-[320px] z-50 animate-fade-in">
-                  <div className="px-3 pb-2 border-b border-border mb-1">
-                    <span className="text-xs font-bold uppercase tracking-wider text-primary">Danh mục sản phẩm</span>
-                  </div>
-                  {categories.length === 0 ? (
-                    <div className="px-4 py-3 text-sm text-muted-foreground">Chưa có danh mục nào.</div>
-                  ) : (
-                    <div className="grid grid-cols-1 gap-0.5 max-h-[360px] overflow-y-auto">
-                      {categories.map((cat) => (
-                        <button
-                          key={cat.id}
-                          onClick={() => { navigate(`/?cat=${cat.slug}`); setProductOpen(false); }}
-                          className="flex items-center gap-3 w-full px-3 py-2 text-sm text-foreground hover:bg-muted rounded-lg text-left"
-                        >
-                          {cat.image_url ? (
-                            <img src={cat.image_url} alt={cat.name} className="w-7 h-7 object-contain rounded" onError={(e) => { e.currentTarget.style.display = "none"; }} />
-                          ) : (
-                            <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center"><Gamepad2 className="w-4 h-4 text-primary" /></div>
-                          )}
-                          <span className="font-medium truncate">{cat.name}</span>
-                        </button>
-                      ))}
+                <div className="absolute top-full left-0 pt-2 z-50">
+                  <div className="bg-card border border-border rounded-xl shadow-lg py-2 min-w-[260px] max-w-[320px] animate-fade-in">
+                    <div className="px-3 pb-2 border-b border-border mb-1">
+                      <span className="text-xs font-bold uppercase tracking-wider text-primary">Danh mục sản phẩm</span>
                     </div>
-                  )}
-                  <div className="border-t border-border mt-1 pt-1">
-                    <button
-                      onClick={() => { navigate("/?cat=all"); setProductOpen(false); }}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm font-semibold text-primary hover:bg-muted rounded-lg"
-                    >
-                      <LayoutGrid className="w-4 h-4" /> Xem tất cả sản phẩm
-                    </button>
+                    {categories.length === 0 ? (
+                      <div className="px-4 py-3 text-sm text-muted-foreground">Chưa có danh mục nào.</div>
+                    ) : (
+                      <div className="grid grid-cols-1 gap-0.5 max-h-[360px] overflow-y-auto">
+                        {categories.map((cat) => (
+                          <button
+                            key={cat.id}
+                            onClick={() => { navigate(`/?cat=${cat.slug}`); setProductOpen(false); }}
+                            className="flex items-center gap-3 w-full px-3 py-2 text-sm text-foreground hover:bg-muted rounded-lg text-left"
+                          >
+                            {cat.image_url ? (
+                              <img src={cat.image_url} alt={cat.name} className="w-7 h-7 object-contain rounded" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                            ) : (
+                              <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center"><Gamepad2 className="w-4 h-4 text-primary" /></div>
+                            )}
+                            <span className="font-medium truncate">{cat.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <div className="border-t border-border mt-1 pt-1">
+                      <button
+                        onClick={() => { navigate("/?cat=all"); setProductOpen(false); }}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-sm font-semibold text-primary hover:bg-muted rounded-lg"
+                      >
+                        <LayoutGrid className="w-4 h-4" /> Xem tất cả sản phẩm
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
