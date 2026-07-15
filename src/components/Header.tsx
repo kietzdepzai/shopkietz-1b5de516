@@ -163,7 +163,7 @@ const Header = () => {
             </a>
 
             {user ? (
-              <div className="relative" ref={userMenuRef} onMouseEnter={() => setUserMenuOpen(true)} onMouseLeave={() => setUserMenuOpen(false)}>
+              <div className="relative" ref={userMenuRef} onMouseEnter={() => { clearHoverTimer(userMenuTimer); setUserMenuOpen(true); }} onMouseLeave={() => delayClose(userMenuTimer, setUserMenuOpen)}>
                 <button onClick={() => setUserMenuOpen(!userMenuOpen)} className="flex items-center gap-2.5 pl-1 pr-3 h-11 rounded-xl border border-border bg-card hover:bg-muted transition-colors">
                   <div className="w-9 h-9 rounded-lg brand-gradient flex items-center justify-center text-white text-sm font-bold overflow-hidden">
                     {displayName.charAt(0).toUpperCase()}
