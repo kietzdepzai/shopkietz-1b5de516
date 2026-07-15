@@ -23,6 +23,7 @@ const Header = () => {
   const [hotline, setHotline] = useState("0967319920");
   const [email, setEmail] = useState("support@shopkietz.com");
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isTouch, setIsTouch] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const topupRef = useRef<HTMLDivElement>(null);
   const productRef = useRef<HTMLDivElement>(null);
