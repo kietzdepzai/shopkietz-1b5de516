@@ -14,6 +14,7 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import OrderDetail from "./pages/OrderDetail";
 import ProductDetail from "./pages/ProductDetail";
+import CategoryPage from "./pages/CategoryPage";
 import FAQ from "./pages/FAQ";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
