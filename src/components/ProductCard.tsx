@@ -98,7 +98,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
         {/* Image */}
         <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-muted to-background">
           {imageUrl ? (
-            <img src={imageUrl} alt={name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+            <img src={imageUrl} alt={name} loading="lazy" className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-muted-foreground">
               <Package className="w-16 h-16 opacity-30" />

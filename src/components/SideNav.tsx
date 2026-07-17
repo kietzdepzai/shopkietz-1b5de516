@@ -70,7 +70,7 @@ const SideNav = ({ open, onClose }: SideNavProps) => {
               <img
                 src={logoUrl}
                 alt="Shop Logo"
-                className="w-full h-32 object-cover"
+                className="w-full h-32 object-contain bg-card p-2"
                 onError={() => setLogoUrl(null)}
               />
             ) : (

@@ -88,7 +88,7 @@ const Index = () => {
                       <img
                         src={image}
                         alt={cat.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
                       <Package className="w-20 h-20 text-muted-foreground/40" />
