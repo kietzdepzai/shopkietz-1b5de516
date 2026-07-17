@@ -30,7 +30,7 @@ const WelcomePanel = () => {
       {/* Banner card */}
       <div className="rounded-2xl border-2 border-primary/60 p-2 bg-card shadow-[0_0_25px_hsl(var(--primary)/0.35)]">
         {logoUrl ? (
-          <img src={logoUrl} alt={title} className="w-full h-64 object-cover rounded-xl" />
+          <img src={logoUrl} alt={title} className="w-full h-64 object-contain bg-muted rounded-xl p-3" />
         ) : (
           <div className="w-full h-64 rounded-xl gradient-primary flex items-center justify-center font-display text-4xl text-primary-foreground neon-text">
             {title}
