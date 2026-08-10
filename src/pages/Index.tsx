@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
+import Hero from "@/components/Hero";
 import WelcomePanel from "@/components/WelcomePanel";
 import TopUpGuide from "@/components/TopUpGuide";
 import RecentPurchases from "@/components/RecentPurchases";
@@ -52,16 +53,18 @@ const Index = () => {
       <Header />
 
       <main className="flex-1 container mx-auto px-4 py-6 space-y-8">
+        <Hero />
         <WelcomePanel />
 
         {/* Section header */}
-        <div className="flex items-center justify-between gap-3">
+        <div id="danh-muc" className="flex items-center justify-between gap-3 scroll-mt-24">
           <div className="flex items-center gap-2">
             <Flame className="w-5 h-5 text-primary" />
             <h2 className="font-display text-xl sm:text-2xl font-extrabold text-foreground">Danh mục sản phẩm</h2>
           </div>
           <p className="text-sm text-muted-foreground">Chọn danh mục để xem sản phẩm</p>
         </div>
+
 
         {loading ? (
           <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>

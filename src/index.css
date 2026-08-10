@@ -119,30 +119,32 @@
   }
 
   .dark {
-    --background: 240 6% 8%;
-    --foreground: 0 0% 98%;
-    --card: 240 5% 10%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 5% 12%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 185 100% 50%;
-    --primary-foreground: 240 10% 6%;
-    --secondary: 273 95% 58%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 5% 14%;
-    --muted-foreground: 220 14% 78%;
-    --accent: 292 90% 56%;
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+    --card: 222 44% 9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 44% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 224 90% 62%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 265 85% 66%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 222 34% 14%;
+    --muted-foreground: 215 20% 72%;
+    --accent: 265 85% 66%;
     --accent-foreground: 0 0% 100%;
     --destructive: 350 92% 57%;
     --destructive-foreground: 0 85% 97%;
-    --border: 220 55% 32%;
-    --input: 240 5% 18%;
-    --ring: 185 100% 50%;
-    --neon-glow: 185 100% 50%;
-    --neon-cyan: 185 100% 50%;
-    --neon-orange: 292 90% 56%;
+    --border: 222 30% 20%;
+    --input: 222 32% 16%;
+    --ring: 224 90% 62%;
+    --neon-glow: 224 90% 62%;
+    --neon-cyan: 224 90% 62%;
+    --neon-orange: 265 85% 66%;
     --neon-red: 350 92% 57%;
+    --brand-gradient: linear-gradient(90deg, hsl(224 90% 60%), hsl(250 88% 64%) 50%, hsl(272 85% 62%));
     --chart-1: 252 94% 85%;
+
     --chart-2: 269 97% 85%;
     --chart-3: 229 93% 81%;
     --chart-4: 255 91% 76%;
@@ -198,18 +200,32 @@
     box-shadow: 0 4px 20px hsl(205 60% 40% / 0.08), 0 1px 3px hsl(205 60% 40% / 0.06);
   }
   .gradient-primary {
-    background: linear-gradient(90deg, hsl(205 95% 55%), hsl(200 100% 60%) 50%, hsl(195 95% 55%));
+    background: var(--brand-gradient);
   }
   .gradient-accent {
-    background: linear-gradient(90deg, hsl(205 95% 55%), hsl(200 100% 60%) 50%, hsl(195 95% 55%));
+    background: var(--brand-gradient);
   }
   .galaxy-button {
-    background: linear-gradient(90deg, hsl(205 95% 55%), hsl(200 100% 60%) 50%, hsl(195 95% 55%));
-    box-shadow: 0 4px 14px hsl(var(--primary) / 0.35);
+    background: var(--brand-gradient);
+    box-shadow: 0 4px 18px hsl(var(--primary) / 0.45);
   }
   .neon-purple {
     box-shadow: 0 4px 14px hsl(var(--primary) / 0.2);
   }
+  .hero-aurora {
+    background:
+      radial-gradient(60% 90% at 15% 20%, hsl(var(--primary) / 0.35), transparent 60%),
+      radial-gradient(55% 85% at 85% 30%, hsl(var(--accent) / 0.32), transparent 60%),
+      radial-gradient(80% 120% at 50% 120%, hsl(var(--secondary) / 0.22), transparent 65%);
+  }
+  .hero-grid-lines {
+    background-image:
+      linear-gradient(hsl(var(--foreground) / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(70% 70% at 50% 40%, #000, transparent 75%);
+  }
+
 }
 
 
