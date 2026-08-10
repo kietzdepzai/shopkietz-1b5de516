@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
+import Hero from "@/components/Hero";
 import WelcomePanel from "@/components/WelcomePanel";
 import TopUpGuide from "@/components/TopUpGuide";
 import RecentPurchases from "@/components/RecentPurchases";
