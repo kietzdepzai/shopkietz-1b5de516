@@ -37,10 +37,16 @@
 
     --radius: 0.75rem;
 
+    --toast-success: 145 70% 48%;
+    --toast-error: 350 85% 60%;
+    --toast-warning: 38 95% 55%;
+    --toast-info: 210 95% 60%;
+
     --neon-glow: 205 95% 52%;
     --neon-cyan: 190 95% 50%;
     --neon-orange: 30 100% 55%;
     --neon-red: 0 85% 55%;
+
 
     --brand-gradient: linear-gradient(90deg, hsl(205 95% 55%), hsl(200 100% 60%) 50%, hsl(195 95% 55%));
 
