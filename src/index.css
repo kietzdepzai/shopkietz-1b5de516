@@ -144,10 +144,17 @@
     --border: 222 30% 20%;
     --input: 222 32% 16%;
     --ring: 224 90% 62%;
+
+    --toast-success: 145 75% 55%;
+    --toast-error: 350 90% 65%;
+    --toast-warning: 45 95% 60%;
+    --toast-info: 210 95% 65%;
+
     --neon-glow: 224 90% 62%;
     --neon-cyan: 224 90% 62%;
     --neon-orange: 265 85% 66%;
     --neon-red: 350 92% 57%;
+
     --brand-gradient: linear-gradient(90deg, hsl(224 90% 60%), hsl(250 88% 64%) 50%, hsl(272 85% 62%));
     --chart-1: 252 94% 85%;
 
