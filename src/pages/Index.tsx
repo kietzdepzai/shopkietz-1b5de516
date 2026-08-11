@@ -4,8 +4,10 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import WelcomePanel from "@/components/WelcomePanel";
 import TopUpGuide from "@/components/TopUpGuide";
+import BestSellers from "@/components/BestSellers";
 import RecentPurchases from "@/components/RecentPurchases";
 import RecentTopups from "@/components/RecentTopups";
+
 import Footer from "@/components/Footer";
 import WelcomePopup from "@/components/WelcomePopup";
 import { supabase } from "@/integrations/supabase/client";
@@ -120,7 +122,10 @@ const Index = () => {
           </div>
         )}
 
+        <BestSellers />
+
         <div className="grid md:grid-cols-2 gap-6">
+
           <RecentPurchases />
           <RecentTopups />
         </div>
