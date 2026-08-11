@@ -122,7 +122,10 @@ const Index = () => {
           </div>
         )}
 
+        <BestSellers />
+
         <div className="grid md:grid-cols-2 gap-6">
+
           <RecentPurchases />
           <RecentTopups />
         </div>
