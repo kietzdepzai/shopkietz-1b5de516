@@ -64,33 +64,48 @@ const Admin = () => {
     { id: "shop_settings" as Tab, name: "Mô tả Shop", icon: FileText },
   ];
 
+  const activeTab = tabs.find((t) => t.id === tab);
+
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
       {/* Mobile top bar */}
-      <div className="md:hidden bg-card border-b border-border p-3 flex items-center justify-between sticky top-0 z-30">
+      <div className="md:hidden bg-card/80 backdrop-blur border-b border-border p-3 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-2">
-          <Gamepad2 className="w-6 h-6 text-primary" />
-          <span className="font-display text-sm font-bold text-primary">ADMIN</span>
+          <span className="w-8 h-8 rounded-xl gradient-primary flex items-center justify-center">
+            <Gamepad2 className="w-4 h-4 text-primary-foreground" />
+          </span>
+          <span className="font-display text-sm font-bold text-foreground">ADMIN</span>
         </div>
-        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded bg-muted border border-border">
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg bg-muted border border-border">
           <LayoutDashboard className="w-4 h-4" />
         </button>
       </div>
 
-      <aside className={`bg-card border-r border-border md:flex md:flex-col transition-all duration-300 ${sidebarOpen ? "flex flex-col w-full md:w-64" : "hidden md:flex md:w-16"}`}>
-        <div className="hidden md:flex p-4 border-b border-border items-center gap-2">
-          <Gamepad2 className="w-7 h-7 text-primary shrink-0" />
-          {sidebarOpen && <span className="font-display text-sm font-bold text-primary tracking-wider">ADMIN</span>}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="ml-auto p-1 rounded hover:bg-muted transition-colors">
+      <aside className={`bg-card/70 backdrop-blur border-r border-border md:flex md:flex-col md:sticky md:top-0 md:h-screen transition-all duration-300 ${sidebarOpen ? "flex flex-col w-full md:w-64" : "hidden md:flex md:w-[72px]"}`}>
+        <div className="hidden md:flex p-4 border-b border-border items-center gap-2.5">
+          <span className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shrink-0 shadow-lg">
+            <Gamepad2 className="w-5 h-5 text-primary-foreground" />
+          </span>
+          {sidebarOpen && (
+            <div className="min-w-0">
+              <p className="font-display text-sm font-bold text-foreground leading-tight">ADMIN</p>
+              <p className="text-[11px] text-muted-foreground truncate">Bảng điều khiển</p>
+            </div>
+          )}
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="ml-auto p-1 rounded-lg hover:bg-muted transition-colors">
             <ChevronLeft className={`w-4 h-4 text-muted-foreground transition-transform ${!sidebarOpen ? "rotate-180" : ""}`} />
           </button>
         </div>
         <nav className="flex-1 p-2 space-y-1 overflow-x-auto md:overflow-y-auto flex md:block gap-1">
+          {sidebarOpen && <p className="hidden md:block px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quản lý</p>}
           {tabs.map((t) => (
             <button key={t.id} onClick={() => { setTab(t.id); if (window.innerWidth < 768) setSidebarOpen(false); }}
-              className={`shrink-0 md:w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                tab === t.id ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              }`}>
+              title={t.name}
+              className={`group relative shrink-0 md:w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+                tab === t.id
+                  ? "gradient-primary text-primary-foreground shadow-md"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              } ${sidebarOpen ? "" : "md:justify-center"}`}>
               <t.icon className="w-5 h-5 shrink-0" />
               <span className={sidebarOpen ? "inline" : "hidden md:hidden"}>{t.name}</span>
               <span className="md:hidden">{t.name}</span>
@@ -98,16 +113,21 @@ const Admin = () => {
           ))}
         </nav>
         <div className="p-2 border-t border-border space-y-1 hidden md:block">
-          <a href="/" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold gradient-primary text-primary-foreground hover:opacity-90 transition-all">
+          <a href="/" className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold border border-border text-foreground hover:bg-muted transition-all ${sidebarOpen ? "" : "justify-center"}`}>
             <ChevronLeft className="w-5 h-5 shrink-0" />{sidebarOpen && <span>Về trang chủ Shop</span>}
           </a>
-          <button onClick={signOut} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-destructive hover:bg-muted transition-all">
+          <button onClick={signOut} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-destructive hover:bg-destructive/10 transition-all ${sidebarOpen ? "" : "justify-center"}`}>
             <LogOut className="w-5 h-5 shrink-0" />{sidebarOpen && <span>Đăng xuất</span>}
           </button>
         </div>
       </aside>
       <main className="flex-1 p-3 sm:p-6 overflow-auto">
         <div className="max-w-6xl mx-auto">
+          <div className="hidden md:flex items-center gap-2 mb-4 text-xs text-muted-foreground">
+            <span>Admin</span>
+            <span className="opacity-50">/</span>
+            <span className="text-foreground font-semibold">{activeTab?.name}</span>
+          </div>
           {tab === "overview" && <AdminOverview />}
           {tab === "orders" && <AdminOrders />}
           {tab === "boost_orders" && <AdminBoostOrders />}
