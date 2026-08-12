@@ -158,6 +158,36 @@ export type Database = {
         }
         Relationships: []
       }
+      music_tracks: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          sort_order: number
+          storage_path: string | null
+          title: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          storage_path?: string | null
+          title: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          storage_path?: string | null
+          title?: string
+          url?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           account_info: string | null
