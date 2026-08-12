@@ -27,6 +27,7 @@ import BoostHistory from "./pages/BoostHistory";
 import ClickSparkle from "./components/ClickSparkle";
 import TopupNotifier from "./components/TopupNotifier";
 import KietzBadge from "./components/KietzBadge";
+import MusicPlayer from "./components/MusicPlayer";
 import PageLoader from "./components/PageLoader";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
         <ClickSparkle />
         <TopupNotifier />
         <KietzBadge />
+        <MusicPlayer />
         <BrowserRouter>
           <PageLoader />
           <Routes>
