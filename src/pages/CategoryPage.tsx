@@ -4,8 +4,9 @@ import Header from "@/components/Header";
 import TopBar from "@/components/TopBar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Loader2, PackageOpen } from "lucide-react";
+import { ArrowLeft, PackageOpen } from "lucide-react";
 
 type Category = { id: string; name: string; slug: string; image_url: string | null };
 type Product = {
@@ -56,9 +57,11 @@ const CategoryPage = () => {
         </Link>
 
         {/* Category header */}
-        <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-card to-accent/10 p-5 sm:p-8">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-card border border-border flex items-center justify-center shrink-0 shadow-sm">
+        <div className="relative overflow-hidden rounded-2xl glass-panel neon-edge p-5 sm:p-8">
+          <div className="pointer-events-none absolute inset-0 glow-orbs" aria-hidden="true" />
+          <div className="relative flex items-center gap-4">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-card/70 border border-primary/25 flex items-center justify-center shrink-0">
+
               {category?.image_url ? (
                 <img src={category.image_url} alt={category.name} className="w-full h-full object-contain p-2" />
               ) : (
@@ -78,7 +81,7 @@ const CategoryPage = () => {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+          <ProductCardSkeleton count={8} />
         ) : products.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
             <PackageOpen className="w-12 h-12 mx-auto mb-3 opacity-40" />
@@ -86,6 +89,7 @@ const CategoryPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+
             {products.map((p) => (
               <ProductCard
                 key={p.id}

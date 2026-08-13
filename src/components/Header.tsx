@@ -99,7 +99,7 @@ const Header = () => {
   );
 
   return (
-    <header className="sticky top-0 z-50 bg-background shadow-sm">
+    <header className="sticky top-0 z-50 glass-nav">
       {/* Top blue gradient bar */}
       <div className="brand-gradient text-white">
         <div className="container mx-auto px-4 h-11 flex items-center justify-between">

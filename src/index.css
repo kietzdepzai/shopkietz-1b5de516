@@ -151,7 +151,7 @@
     --toast-info: 210 95% 65%;
 
     --neon-glow: 224 90% 62%;
-    --neon-cyan: 224 90% 62%;
+    --neon-cyan: 190 95% 55%;
     --neon-orange: 265 85% 66%;
     --neon-red: 350 92% 57%;
 
@@ -193,9 +193,9 @@
 
 @layer utilities {
   .font-display {
-    font-family: 'Be Vietnam Pro', sans-serif;
+    font-family: 'Space Grotesk', 'Be Vietnam Pro', sans-serif;
     font-weight: 800;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
   .brand-gradient {
     background: var(--brand-gradient);
@@ -239,7 +239,149 @@
     mask-image: radial-gradient(70% 70% at 50% 40%, #000, transparent 75%);
   }
 
+  /* ---------- Cyberpunk / gaming polish ---------- */
+
+  /* Glassmorphic surface with a thin glowing edge */
+  .glass-panel {
+    background: hsl(var(--card) / 0.65);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid hsl(var(--primary) / 0.22);
+    box-shadow: 0 8px 30px hsl(var(--background) / 0.6), inset 0 1px 0 hsl(var(--foreground) / 0.05);
+  }
+  .glass-nav {
+    background: hsl(var(--background) / 0.72);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border-bottom: 1px solid hsl(var(--primary) / 0.18);
+  }
+  .neon-edge {
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.25),
+      0 0 18px -6px hsl(var(--primary) / 0.55);
+  }
+  .neon-edge-strong {
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.55),
+      0 0 26px -4px hsl(var(--primary) / 0.75),
+      0 18px 40px -18px hsl(var(--accent) / 0.7);
+  }
+
+  /* Micro-grid decorative background */
+  .micro-grid {
+    background-image:
+      linear-gradient(hsl(var(--foreground) / 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.045) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  /* Soft glowing radial orbs */
+  .glow-orbs {
+    background:
+      radial-gradient(38% 38% at 12% 8%, hsl(var(--primary) / 0.20), transparent 70%),
+      radial-gradient(34% 34% at 88% 18%, hsl(var(--accent) / 0.18), transparent 70%),
+      radial-gradient(45% 45% at 60% 95%, hsl(var(--secondary) / 0.14), transparent 70%);
+  }
+
+  /* Shimmer skeleton */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+    background: hsl(var(--muted) / 0.7);
+  }
+  .shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--foreground) / 0.09) 45%,
+      hsl(var(--primary) / 0.14) 55%,
+      transparent
+    );
+    animation: shimmer-slide 1.4s infinite;
+  }
+
+  /* Buttons: gradient sweep on hover */
+  .btn-sweep {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--brand-gradient);
+    background-size: 200% 100%;
+    background-position: 0% 0%;
+    transition: background-position 0.5s ease, transform 0.25s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 18px -8px hsl(var(--primary) / 0.9);
+  }
+  .btn-sweep:hover:not(:disabled) {
+    background-position: 100% 0%;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px -8px hsl(var(--primary) / 1);
+  }
+  .btn-sweep::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%) skewX(-18deg);
+    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.35), transparent);
+    transition: transform 0.6s ease;
+  }
+  .btn-sweep:hover:not(:disabled)::before {
+    transform: translateX(120%) skewX(-18deg);
+  }
+  .btn-ghost-neon {
+    transition: all 0.25s ease;
+  }
+  .btn-ghost-neon:hover {
+    border-color: hsl(var(--primary) / 0.6);
+    color: hsl(var(--primary));
+    box-shadow: 0 0 16px -6px hsl(var(--primary));
+    transform: translateY(-1px);
+  }
+
+  /* Gradient tag badges */
+  .badge-hot {
+    background: linear-gradient(135deg, hsl(14 100% 58%), hsl(345 95% 58%));
+    color: #fff;
+    box-shadow: 0 4px 14px -6px hsl(345 95% 58%);
+  }
+  .badge-sale {
+    background: linear-gradient(135deg, hsl(272 90% 62%), hsl(224 92% 60%));
+    color: #fff;
+    box-shadow: 0 4px 14px -6px hsl(272 90% 62%);
+  }
+  .badge-new {
+    background: linear-gradient(135deg, hsl(160 90% 45%), hsl(190 95% 52%));
+    color: #04231d;
+    box-shadow: 0 4px 14px -6px hsl(180 90% 50%);
+  }
+
+  .card-lift {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+  }
 }
+
+@keyframes shimmer-slide {
+  100% { transform: translateX(100%); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 1px hsl(var(--primary) / 0.25), 0 0 16px -8px hsl(var(--primary) / 0.6); }
+  50% { box-shadow: 0 0 0 1px hsl(var(--primary) / 0.5), 0 0 26px -6px hsl(var(--primary) / 0.9); }
+}
+.animate-glow-pulse {
+  animation: glow-pulse 2.6s ease-in-out infinite;
+}
+
 
 
 @keyframes logo-bounce {
