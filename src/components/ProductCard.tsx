@@ -94,34 +94,56 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
 
   return (
     <>
-      <div className={`group relative flex flex-col bg-card border rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${isBoost ? "border-accent/50" : "border-border hover:border-primary/60"}`}>
+      <div
+        className={`group relative flex flex-col rounded-2xl overflow-hidden card-lift glass-panel neon-edge hover:-translate-y-1 hover:neon-edge-strong ${
+          isBoost ? "border-accent/40" : ""
+        }`}
+      >
+        {/* decorative grid */}
+        <div className="pointer-events-none absolute inset-0 micro-grid opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
+
         {/* Image */}
-        <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-muted to-background">
+        <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-muted/60 via-card to-background">
+          <div className="pointer-events-none absolute inset-0 glow-orbs opacity-70" aria-hidden="true" />
           {imageUrl ? (
-            <img src={imageUrl} alt={name} loading="lazy" className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500" />
+            <img
+              src={imageUrl}
+              alt={name}
+              loading="lazy"
+              className="relative w-full h-full object-contain p-3 transition-transform duration-700 ease-out group-hover:scale-110"
+            />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-muted-foreground">
               <Package className="w-16 h-16 opacity-30" />
             </div>
           )}
 
-          {/* Stock badge */}
-          <div className="absolute top-2 left-2">
-            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-bold shadow-md ${isBoost ? "bg-accent text-accent-foreground" : stock > 0 ? "bg-primary text-primary-foreground" : "bg-destructive text-destructive-foreground"}`}>
+          {/* Stock / type badge */}
+          <div className="absolute top-2 left-2 flex flex-col gap-1.5 items-start">
+            <span
+              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold tracking-wide uppercase ${
+                isBoost ? "badge-sale" : stock > 0 ? "badge-new" : "bg-destructive text-destructive-foreground"
+              }`}
+            >
               {isBoost ? "Cày thuê" : stock > 0 ? `Còn ${stock}` : "Hết hàng"}
             </span>
+            {!isBoost && stock > 0 && stock <= 3 && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold tracking-wide uppercase badge-hot">
+                Hot
+              </span>
+            )}
           </div>
 
           {/* Country flag */}
-          <div className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/90 backdrop-blur flex items-center justify-center text-sm shadow-md">
+          <div className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/70 backdrop-blur border border-primary/20 flex items-center justify-center text-sm">
             🇻🇳
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex flex-col flex-1 p-3 space-y-2.5">
+        <div className="relative flex flex-col flex-1 p-3 space-y-2.5">
           {/* Name */}
-          <h3 className="font-bold text-foreground text-sm leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors">
+          <h3 className="font-display text-sm leading-snug line-clamp-2 min-h-[2.5rem] text-foreground group-hover:text-primary transition-colors">
             {name}
           </h3>
 
@@ -130,7 +152,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
             {tags.map((t, idx) => (
               <span
                 key={idx}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[11px] font-semibold leading-tight"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 border border-primary/25 text-primary text-[11px] font-semibold leading-tight"
               >
                 <CheckCircle2 className="w-3 h-3" />
                 <span className="truncate max-w-[140px]">{t}</span>
@@ -139,7 +161,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
           </div>
 
           {/* Price */}
-          <div className="flex items-baseline justify-between pt-1 border-t border-border">
+          <div className="flex items-baseline justify-between pt-1 border-t border-primary/15">
             <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Giá bán</span>
             <span className="text-lg font-extrabold text-yellow-500 leading-none">
               {user ? price : "Đăng nhập"}
@@ -151,7 +173,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
             {id ? (
               <Link
                 to={`/san-pham/${id}`}
-                className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg bg-muted border border-border hover:bg-border transition-colors text-xs font-semibold text-foreground"
+                className="btn-ghost-neon flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg bg-muted/60 border border-border text-xs font-semibold text-foreground"
               >
                 <Eye className="w-3.5 h-3.5" /> Chi tiết
               </Link>
@@ -160,19 +182,20 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
               <button
                 onClick={() => isBoost ? setShowBoost(true) : setShowConfirm(true)}
                 disabled={buying || (!isBoost && stock <= 0)}
-                className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-bold disabled:opacity-50"
+                className="btn-sweep flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-primary-foreground text-xs font-bold disabled:opacity-50"
               >
                 {buying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShoppingCart className="w-3.5 h-3.5" />}
                 {buying ? "..." : !isBoost && stock <= 0 ? "Hết" : isBoost ? "Đặt cày" : "Mua ngay"}
               </button>
             ) : (
-              <Link to="/dang-nhap" className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-bold">
+              <Link to="/dang-nhap" className="btn-sweep flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-primary-foreground text-xs font-bold">
                 <ShoppingCart className="w-3.5 h-3.5" /> Đăng nhập
               </Link>
             )}
           </div>
         </div>
       </div>
+
 
       <PurchaseConfirmDialog
         open={showConfirm}
