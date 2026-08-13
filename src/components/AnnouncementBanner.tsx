@@ -52,11 +52,13 @@ const AnnouncementBanner = () => {
         </div>
       </div>
 
-      <div className="mt-5 pt-5 border-t border-border">
+      <div className="relative mt-5 pt-5 border-t border-primary/15">
         <p className="text-lg font-bold text-foreground">{title}</p>
         <div className="mt-3 space-y-1 text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: descHtml.replace(/\n/g, "<br/>") }} />
       </div>
+      </div>
     </div>
+
   );
 };
 
