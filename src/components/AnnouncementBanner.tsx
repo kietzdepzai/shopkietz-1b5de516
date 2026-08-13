@@ -24,7 +24,10 @@ const AnnouncementBanner = () => {
   }, []);
 
   return (
-    <div className="bg-card border border-border rounded-xl p-6 neon-card">
+    <div className="relative overflow-hidden glass-panel neon-edge rounded-2xl p-6">
+      <div className="pointer-events-none absolute inset-0 glow-orbs" aria-hidden="true" />
+      <div className="relative">
+
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Shield className="w-5 h-5 text-primary" />
