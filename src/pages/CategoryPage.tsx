@@ -78,7 +78,7 @@ const CategoryPage = () => {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+          <ProductCardSkeleton count={8} />
         ) : products.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
             <PackageOpen className="w-12 h-12 mx-auto mb-3 opacity-40" />
@@ -86,6 +86,7 @@ const CategoryPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+
             {products.map((p) => (
               <ProductCard
                 key={p.id}

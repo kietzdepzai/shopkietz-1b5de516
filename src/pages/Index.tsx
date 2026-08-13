@@ -50,11 +50,14 @@ const Index = () => {
   }, [products]);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="relative min-h-screen bg-background flex flex-col">
+      <div className="pointer-events-none fixed inset-0 micro-grid opacity-40" aria-hidden="true" />
+      <div className="pointer-events-none fixed inset-0 glow-orbs" aria-hidden="true" />
       <WelcomePopup />
       <Header />
 
-      <main className="flex-1 container mx-auto px-4 py-6 space-y-8">
+      <main className="relative flex-1 container mx-auto px-4 py-6 space-y-8">
+
         <Hero />
         <WelcomePanel />
 
@@ -69,12 +72,12 @@ const Index = () => {
 
 
         {loading ? (
-          <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+          <ProductCardSkeleton count={8} />
         ) : categories.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">Chưa có danh mục nào.</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {categories.map((cat) => {
+            {categories.map((cat, idx) => {
               const stats = catStats[cat.name];
               const image = cat.image_url || stats?.image || null;
               const priceLabel = stats && stats.count > 0
@@ -86,33 +89,35 @@ const Index = () => {
                 <Link
                   key={cat.id}
                   to={`/danh-muc/${cat.slug}`}
-                  className="group relative flex flex-col bg-card border border-border rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-primary/60"
+                  style={{ animationDelay: `${idx * 60}ms` }}
+                  className="group relative flex flex-col rounded-2xl overflow-hidden glass-panel neon-edge card-lift hover:-translate-y-1 hover:neon-edge-strong animate-fade-in-up"
                 >
-                  <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-muted to-background flex items-center justify-center">
+                  <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-muted/60 via-card to-background flex items-center justify-center">
+                    <div className="pointer-events-none absolute inset-0 glow-orbs opacity-70" aria-hidden="true" />
                     {image ? (
                       <img
                         src={image}
                         alt={cat.name}
-                        className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                        className="relative w-full h-full object-contain p-4 transition-transform duration-700 ease-out group-hover:scale-110"
                       />
                     ) : (
                       <Package className="w-20 h-20 text-muted-foreground/40" />
                     )}
                     {stats && stats.count > 0 && (
-                      <span className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-bold shadow-md bg-primary text-primary-foreground">
+                      <span className="absolute top-2 left-2 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wide badge-sale">
                         {stats.count} sản phẩm
                       </span>
                     )}
                   </div>
-                  <div className="flex flex-col flex-1 p-3 space-y-2">
-                    <h3 className="font-bold text-foreground text-sm leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors uppercase">
+                  <div className="relative flex flex-col flex-1 p-3 space-y-2">
+                    <h3 className="font-display text-sm leading-snug line-clamp-2 min-h-[2.5rem] text-foreground group-hover:text-primary transition-colors uppercase">
                       {cat.name}
                     </h3>
-                    <div className="flex items-baseline justify-between pt-1 border-t border-border">
+                    <div className="flex items-baseline justify-between pt-1 border-t border-primary/15">
                       <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Giá</span>
                       <span className="text-base font-extrabold text-yellow-500 leading-none">{priceLabel}</span>
                     </div>
-                    <div className="flex items-center justify-center gap-1.5 mt-1 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold group-hover:bg-primary/90 transition-colors">
+                    <div className="btn-sweep flex items-center justify-center gap-1.5 mt-1 px-3 py-2 rounded-lg text-primary-foreground text-xs font-bold">
                       Xem sản phẩm <ArrowRight className="w-3.5 h-3.5" />
                     </div>
                   </div>
@@ -121,6 +126,7 @@ const Index = () => {
             })}
           </div>
         )}
+
 
         <BestSellers />
 
