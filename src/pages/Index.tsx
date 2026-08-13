@@ -5,13 +5,14 @@ import Hero from "@/components/Hero";
 import WelcomePanel from "@/components/WelcomePanel";
 import TopUpGuide from "@/components/TopUpGuide";
 import BestSellers from "@/components/BestSellers";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import RecentPurchases from "@/components/RecentPurchases";
 import RecentTopups from "@/components/RecentTopups";
 
 import Footer from "@/components/Footer";
 import WelcomePopup from "@/components/WelcomePopup";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Package, ArrowRight, Flame } from "lucide-react";
+import { Package, ArrowRight, Flame } from "lucide-react";
 
 type Category = { id: string; name: string; slug: string; image_url: string | null; sort_order: number };
 type Product = { id: string; name: string; price: number; category: string; image_url: string | null };

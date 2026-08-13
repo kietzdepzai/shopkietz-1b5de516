@@ -4,8 +4,9 @@ import Header from "@/components/Header";
 import TopBar from "@/components/TopBar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Loader2, PackageOpen } from "lucide-react";
+import { ArrowLeft, PackageOpen } from "lucide-react";
 
 type Category = { id: string; name: string; slug: string; image_url: string | null };
 type Product = {
