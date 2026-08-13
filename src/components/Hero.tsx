@@ -9,9 +9,10 @@ const badges = [
 
 const Hero = () => {
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-border bg-card">
+    <section className="relative overflow-hidden rounded-3xl glass-panel neon-edge">
       <div className="absolute inset-0 hero-aurora" aria-hidden="true" />
       <div className="absolute inset-0 hero-grid-lines" aria-hidden="true" />
+
 
       <div className="relative px-6 py-12 sm:px-10 sm:py-16 lg:py-20 max-w-3xl">
         <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-semibold tracking-wide text-primary">
@@ -33,16 +34,18 @@ const Hero = () => {
         <div className="mt-7 flex flex-wrap items-center gap-3">
           <a
             href="#danh-muc"
-            className="inline-flex items-center gap-2 rounded-xl galaxy-button px-6 py-3 text-sm font-bold text-primary-foreground transition-transform hover:scale-[1.03]"
+            className="btn-sweep inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-primary-foreground"
           >
             Khám phá sản phẩm <ArrowRight className="w-4 h-4" />
           </a>
+
           <Link
             to="/nap-the"
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-background/50 px-6 py-3 text-sm font-bold text-foreground backdrop-blur transition-colors hover:border-primary/60 hover:text-primary"
+            className="btn-ghost-neon inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-background/40 px-6 py-3 text-sm font-bold text-foreground backdrop-blur"
           >
             Nạp tiền ngay
           </Link>
+
         </div>
 
         <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3">

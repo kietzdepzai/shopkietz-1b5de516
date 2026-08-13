@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Loader2, Package, Star, TrendingUp } from "lucide-react";
+import { Package, Star, TrendingUp } from "lucide-react";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import { supabase } from "@/integrations/supabase/client";
 
 type Product = {
