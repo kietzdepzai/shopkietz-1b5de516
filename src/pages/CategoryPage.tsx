@@ -57,9 +57,11 @@ const CategoryPage = () => {
         </Link>
 
         {/* Category header */}
-        <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-card to-accent/10 p-5 sm:p-8">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-card border border-border flex items-center justify-center shrink-0 shadow-sm">
+        <div className="relative overflow-hidden rounded-2xl glass-panel neon-edge p-5 sm:p-8">
+          <div className="pointer-events-none absolute inset-0 glow-orbs" aria-hidden="true" />
+          <div className="relative flex items-center gap-4">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-card/70 border border-primary/25 flex items-center justify-center shrink-0">
+
               {category?.image_url ? (
                 <img src={category.image_url} alt={category.name} className="w-full h-full object-contain p-2" />
               ) : (
