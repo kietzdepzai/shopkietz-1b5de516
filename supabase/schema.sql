@@ -128,6 +128,23 @@ CREATE TABLE public.ctv_assignments (
 
 -- ---------- shop_settings ----------
 -- Key/value store for homepage banner, hotline, email, logo etc.
+-- Known keys:
+--   shop_title, shop_description, shop_logo_url, shop_hotline, shop_email,
+--   welcome_popup_enabled | _title | _content | _version,
+--   music_enabled, charge_card_api,
+--   maintenance_enabled  -- 'true' | 'false': locks whole shop for non-admins
+--   maintenance_message  -- text shown on the maintenance screen
+
+-- ---------- music_tracks ----------
+CREATE TABLE public.music_tracks (
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title        text NOT NULL,
+  url          text NOT NULL,
+  storage_path text,
+  sort_order   integer NOT NULL DEFAULT 0,
+  is_active    boolean NOT NULL DEFAULT true,
+  created_at   timestamptz NOT NULL DEFAULT now()
+);
 
 -- ============================================================
 -- RPC functions (see supabase/migrations for definitions):

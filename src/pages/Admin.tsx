@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, CreditCard, Package, LayoutDashboard, LogOut, ChevronLeft, Gamepad2, ShoppingBag, FolderOpen, Tag, UserPlus, FileText, Rocket, Server, Music } from "lucide-react";
+import { Users, CreditCard, Package, LayoutDashboard, LogOut, ChevronLeft, Gamepad2, ShoppingBag, FolderOpen, Tag, UserPlus, FileText, Rocket, Server, Music, Wrench } from "lucide-react";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminTopups from "@/components/admin/AdminTopups";
 import AdminProducts from "@/components/admin/AdminProducts";
@@ -15,8 +15,9 @@ import AdminShopSettings from "@/components/admin/AdminShopSettings";
 import AdminBoostOrders from "@/components/admin/AdminBoostOrders";
 import AdminCardApiSettings from "@/components/admin/AdminCardApiSettings";
 import AdminMusic from "@/components/admin/AdminMusic";
+import AdminMaintenance from "@/components/admin/AdminMaintenance";
 
-type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv" | "shop_settings" | "boost_orders" | "card_api" | "music";
+type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv" | "shop_settings" | "boost_orders" | "card_api" | "music" | "maintenance";
 
 const Admin = () => {
   const { user, signOut, loading } = useAuth();
@@ -25,7 +26,7 @@ const Admin = () => {
   const [checking, setChecking] = useState(true);
   const [tab, setTab] = useState<Tab>(() => {
     const saved = localStorage.getItem("admin_tab");
-    return (saved && ["overview","users","topups","products","orders","categories","discounts","ctv","shop_settings","boost_orders","card_api","music"].includes(saved)) ? saved as Tab : "overview";
+    return (saved && ["overview","users","topups","products","orders","categories","discounts","ctv","shop_settings","boost_orders","card_api","music","maintenance"].includes(saved)) ? saved as Tab : "overview";
   });
 
   useEffect(() => {
@@ -64,6 +65,7 @@ const Admin = () => {
     { id: "ctv" as Tab, name: "Cấp Quyền CTV", icon: UserPlus },
     { id: "shop_settings" as Tab, name: "Mô tả Shop", icon: FileText },
     { id: "music" as Tab, name: "Nhạc", icon: Music },
+    { id: "maintenance" as Tab, name: "Bảo trì", icon: Wrench },
   ];
 
   const activeTab = tabs.find((t) => t.id === tab);
@@ -142,6 +144,7 @@ const Admin = () => {
           {tab === "ctv" && <AdminCTV />}
           {tab === "shop_settings" && <AdminShopSettings />}
           {tab === "music" && <AdminMusic />}
+          {tab === "maintenance" && <AdminMaintenance />}
         </div>
       </main>
     </div>

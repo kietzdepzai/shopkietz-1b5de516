@@ -29,6 +29,7 @@ import TopupNotifier from "./components/TopupNotifier";
 import KietzBadge from "./components/KietzBadge";
 import MusicPlayer from "./components/MusicPlayer";
 import PageLoader from "./components/PageLoader";
+import MaintenanceGate from "./components/MaintenanceGate";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
         <MusicPlayer />
         <BrowserRouter>
           <PageLoader />
+          <MaintenanceGate>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/nap-tien" element={<Navigate to="/nap-the" replace />} />
@@ -68,6 +70,7 @@ const App = () => (
             <Route path="/nap-ngan-hang" element={<TopUp />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </MaintenanceGate>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

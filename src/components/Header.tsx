@@ -20,7 +20,7 @@ const Header = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [hotline, setHotline] = useState("0967319920");
+  const [hotline, setHotline] = useState("0987672604");
   const [email, setEmail] = useState("support@shopkietz.com");
   const [categories, setCategories] = useState<Category[]>([]);
   const [isTouch, setIsTouch] = useState(false);
