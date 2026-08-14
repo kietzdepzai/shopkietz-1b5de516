@@ -15,8 +15,9 @@ import AdminShopSettings from "@/components/admin/AdminShopSettings";
 import AdminBoostOrders from "@/components/admin/AdminBoostOrders";
 import AdminCardApiSettings from "@/components/admin/AdminCardApiSettings";
 import AdminMusic from "@/components/admin/AdminMusic";
+import AdminMaintenance from "@/components/admin/AdminMaintenance";
 
-type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv" | "shop_settings" | "boost_orders" | "card_api" | "music";
+type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv" | "shop_settings" | "boost_orders" | "card_api" | "music" | "maintenance";
 
 const Admin = () => {
   const { user, signOut, loading } = useAuth();
