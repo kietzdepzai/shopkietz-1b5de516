@@ -24,6 +24,8 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [needsConfirm, setNeedsConfirm] = useState<string | null>(null);
+
   const [message, setMessage] = useState("");
   const [forgotPassword, setForgotPassword] = useState(false);
 
