@@ -144,6 +144,19 @@ const Auth = () => {
               {error}
             </div>
           )}
+          {needsConfirm && (
+            <button
+              type="button"
+              className="w-full mb-4 text-sm underline text-primary"
+              onClick={async () => {
+                const { error: e } = await supabase.auth.resend({ type: "signup", email: needsConfirm, options: { emailRedirectTo: window.location.origin } });
+                if (e) setError(e.message);
+                else { setError(""); setNeedsConfirm(null); setMessage("Đã gửi lại email xác nhận, kiểm tra hộp thư nhé!"); }
+              }}
+            >
+              Gửi lại email xác nhận
+            </button>
+          )}
           {message && (
             <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 mb-4 text-sm text-primary">
               {message}
