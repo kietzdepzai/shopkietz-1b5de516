@@ -153,6 +153,14 @@ CREATE TABLE public.music_tracks (
 --   username_available, get_email_by_username,
 --   get_recent_purchases, get_topup_leaderboard,
 --   is_active_ctv, is_ctv_for_category,
+--
+-- RLS notes:
+--   products: CTV policies (select/insert/update/delete) are scoped with
+--     is_ctv_for_category(auth.uid(), category) so a collaborator can only
+--     touch products inside their assigned categories.
+--   storage.objects (bucket 'music'): bucket stays PRIVATE; public SELECT is
+--     limited to objects referenced by public.music_tracks.storage_path,
+--     admins keep insert/delete.
 --   purchase_product, purchase_product_batch,
 --   purchase_boost, cancel_boost_order
 -- ============================================================
