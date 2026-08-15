@@ -78,7 +78,7 @@ const AdminBoostOrders = () => {
             <div key={o.id} className="bg-card border border-border rounded-xl p-4 neon-card space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h3 className="text-sm font-bold text-foreground">{o.product_name}</h3>
+                  <h3 className="text-sm font-bold text-foreground">{o.product_name}{(o as any).package_name ? ` — ${(o as any).package_name}` : ""}</h3>
                   <p className="text-xs text-muted-foreground font-mono">{o.order_code} · {new Date(o.created_at).toLocaleString("vi-VN")}</p>
                 </div>
                 <div className="flex items-center gap-2">

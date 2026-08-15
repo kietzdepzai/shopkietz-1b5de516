@@ -1,29 +1,61 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, ShoppingCart, AlertTriangle } from "lucide-react";
+
+export type BoostPackage = { name: string; price: number };
 
 interface Props {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   productName: string;
   price: string;
-  onConfirm: (username: string, password: string, note: string) => void;
+  packages?: BoostPackage[];
+  onConfirm: (username: string, password: string, note: string, packageIndex: number | null) => void;
   buying: boolean;
 }
 
-const BoostPurchaseDialog = ({ open, onOpenChange, productName, price, onConfirm, buying }: Props) => {
+const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
+
+const BoostPurchaseDialog = ({ open, onOpenChange, productName, price, packages = [], onConfirm, buying }: Props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [note, setNote] = useState("");
+  const [pkgIndex, setPkgIndex] = useState<string>("");
+
+  useEffect(() => { if (!open) setPkgIndex(""); }, [open]);
+
+  const hasPackages = packages.length > 0;
+  const selected = pkgIndex !== "" ? packages[Number(pkgIndex)] : undefined;
+  const displayPrice = selected ? formatVND(selected.price) : price;
+  const canSubmit = !!username.trim() && !!password.trim() && (!hasPackages || pkgIndex !== "");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-primary">🚀 Đặt dịch vụ cày thuê</DialogTitle>
-          <DialogDescription>{productName} — <span className="text-yellow-500 font-bold">{price}</span></DialogDescription>
+          <DialogDescription>{productName} — <span className="text-yellow-500 font-bold">{displayPrice}</span></DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
+          {hasPackages && (
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                <span className="text-destructive">*</span> Chọn gói cần thuê
+              </label>
+              <select
+                value={pkgIndex}
+                onChange={(e) => setPkgIndex(e.target.value)}
+                className={`w-full bg-muted border rounded-lg py-2.5 px-4 text-foreground text-sm focus:outline-none focus:border-primary ${
+                  pkgIndex === "" ? "border-destructive/60" : "border-border"
+                }`}
+              >
+                <option value="">Chọn gói cần thuê</option>
+                {packages.map((p, i) => (
+                  <option key={i} value={i}>{p.name} - {formatVND(p.price)}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className="flex items-start gap-2 bg-destructive/10 border border-destructive/30 rounded-lg p-3">
             <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
             <p className="text-xs text-destructive">Vui lòng <b>TẮT bảo mật 2 lớp (2FA)</b> trước khi gửi tài khoản cho admin để tránh đăng nhập thất bại.</p>
@@ -52,8 +84,8 @@ const BoostPurchaseDialog = ({ open, onOpenChange, productName, price, onConfirm
             className="px-4 py-2 bg-muted text-foreground rounded-lg text-sm font-semibold hover:bg-border transition-colors">
             Huỷ
           </button>
-          <button onClick={() => onConfirm(username.trim(), password.trim(), note.trim())}
-            disabled={buying || !username.trim() || !password.trim()}
+          <button onClick={() => onConfirm(username.trim(), password.trim(), note.trim(), pkgIndex === "" ? null : Number(pkgIndex))}
+            disabled={buying || !canSubmit}
             className="flex items-center justify-center gap-2 px-4 py-2 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
             {buying ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShoppingCart className="w-4 h-4" />}
             {buying ? "Đang đặt..." : "Xác nhận đặt"}
