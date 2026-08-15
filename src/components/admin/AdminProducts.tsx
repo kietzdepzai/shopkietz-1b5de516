@@ -98,11 +98,14 @@ const AdminProducts = () => {
 
   const handleSave = async () => {
     if (!form.name) return;
+    const cleanPackages = form.product_type === "boost"
+      ? boostPackages.map(p => ({ name: p.name.trim(), price: Number(p.price) || 0 })).filter(p => p.name)
+      : [];
     if (editing) {
       await supabase.from("products").update({
         name: form.name, description: form.description, price: form.price,
         category: form.category, status: form.status, image_url: form.image_url || null,
-        product_type: form.product_type,
+        product_type: form.product_type, boost_packages: cleanPackages,
       } as any).eq("id", editing.id);
 
       if (form.product_type === "account" && accountLines.trim()) {
@@ -125,6 +128,7 @@ const AdminProducts = () => {
         name: form.name, description: form.description, price: form.price,
         category: form.category, status: form.status, stock: form.product_type === "boost" ? 9999 : 0,
         image_url: form.image_url || null, product_type: form.product_type,
+        boost_packages: cleanPackages,
       } as any).select().single();
 
       if (newProduct && form.product_type === "account" && accountLines.trim()) {
@@ -144,6 +148,8 @@ const AdminProducts = () => {
   const handleEdit = (p: Product) => {
     setForm({ name: p.name, description: p.description || "", price: p.price, category: p.category, status: p.status, image_url: (p as any).image_url || "", product_type: ((p as any).product_type as "account" | "boost") || "account" });
     setAccountLines("");
+    const pkgs = (p as any).boost_packages;
+    setBoostPackages(Array.isArray(pkgs) ? pkgs.map((x: any) => ({ name: String(x.name || ""), price: Number(x.price) || 0 })) : []);
     setEditing(p);
     setShowForm(true);
   };
