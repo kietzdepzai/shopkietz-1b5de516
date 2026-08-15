@@ -81,11 +81,11 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) =
                       <img
                         src={cat.image_url}
                         alt={cat.name}
-                        className="max-h-8 sm:max-h-10 w-auto object-contain"
+                        className="max-h-10 sm:max-h-12 w-auto object-contain"
                         onError={(e) => { e.currentTarget.style.display = "none"; }}
                       />
                     ) : (
-                      <Package className={`w-8 h-8 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+                      <Package className={`w-10 h-10 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
                     )}
                   </div>
                   <span
