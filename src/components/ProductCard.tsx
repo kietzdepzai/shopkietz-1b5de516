@@ -37,7 +37,16 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
   const [purchasedOrderId, setPurchasedOrderId] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [showBoost, setShowBoost] = useState(false);
+  const [boostPackages, setBoostPackages] = useState<BoostPackage[]>([]);
   const isBoost = product_type === "boost";
+
+  useEffect(() => {
+    if (!isBoost || !id || !showBoost) return;
+    supabase.from("products").select("boost_packages").eq("id", id).maybeSingle().then(({ data }) => {
+      const pkgs = ((data as any)?.boost_packages || []) as BoostPackage[];
+      setBoostPackages(Array.isArray(pkgs) ? pkgs : []);
+    });
+  }, [isBoost, id, showBoost]);
 
   // Auto-generate short tags from description lines (max 3 items)
   const tags = description
@@ -46,16 +55,21 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
     .filter(Boolean)
     .slice(0, 3);
 
-  const handleBoostBuy = async (username: string, password: string, note: string) => {
+  const handleBoostBuy = async (username: string, password: string, note: string, packageIndex: number | null) => {
     if (!user || !id) return;
     if (!username || !password) {
       toast({ title: "Vui lòng nhập tài khoản và mật khẩu", variant: "destructive" });
+      return;
+    }
+    if (boostPackages.length > 0 && packageIndex === null) {
+      toast({ title: "Vui lòng chọn gói cần thuê", variant: "destructive" });
       return;
     }
     setBuying(true);
     const { data, error } = await supabase.rpc("purchase_boost" as any, {
       p_user_id: user.id, p_product_id: id,
       p_username: username, p_password: password, p_note: note,
+      p_package_index: packageIndex,
     });
     setBuying(false);
     if (error) { toast({ title: "Lỗi", description: error.message, variant: "destructive" }); return; }
