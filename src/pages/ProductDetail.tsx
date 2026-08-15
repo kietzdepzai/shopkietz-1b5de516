@@ -204,16 +204,22 @@ const ProductDetail = () => {
     window.location.href = `/don-hang/${result.order_id}`;
   };
 
-  const handleBoostBuy = async (username: string, password: string, note: string) => {
+  const handleBoostBuy = async (username: string, password: string, note: string, packageIndex: number | null) => {
     if (!user) return;
     if (!username.trim() || !password.trim()) {
       toast({ title: "Vui lòng nhập tài khoản và mật khẩu", variant: "destructive" });
+      return;
+    }
+    const pkgs = ((product as any)?.boost_packages || []) as { name: string; price: number }[];
+    if (Array.isArray(pkgs) && pkgs.length > 0 && packageIndex === null) {
+      toast({ title: "Vui lòng chọn gói cần thuê", variant: "destructive" });
       return;
     }
     setBuying(true);
     const { data, error } = await supabase.rpc("purchase_boost" as any, {
       p_user_id: user.id, p_product_id: product.id,
       p_username: username, p_password: password, p_note: note,
+      p_package_index: packageIndex,
     });
     setBuying(false);
     if (error) { toast({ title: "Lỗi", description: error.message, variant: "destructive" }); return; }
