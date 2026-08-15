@@ -227,6 +227,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
         onOpenChange={setShowBoost}
         productName={name}
         price={price}
+        packages={boostPackages}
         onConfirm={handleBoostBuy}
         buying={buying}
       />
