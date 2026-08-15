@@ -462,6 +462,7 @@ const ProductDetail = () => {
         onOpenChange={setShowBoost}
         productName={product.name}
         price={formatVND(product.price)}
+        packages={(((product as any).boost_packages || []) as { name: string; price: number }[])}
         onConfirm={handleBoostBuy}
         buying={buying}
       />
