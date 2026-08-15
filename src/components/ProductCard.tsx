@@ -13,7 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import PurchaseConfirmDialog from "./PurchaseConfirmDialog";
-import BoostPurchaseDialog from "./BoostPurchaseDialog";
+import BoostPurchaseDialog, { BoostPackage } from "./BoostPurchaseDialog";
 
 interface ProductCardProps {
   id?: string;
