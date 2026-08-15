@@ -99,7 +99,7 @@ const Index = () => {
                       <img
                         src={image}
                         alt={cat.name}
-                        className="relative w-full h-full object-contain p-4 transition-transform duration-700 ease-out group-hover:scale-110"
+                        className="relative w-3/4 h-3/4 object-contain transition-transform duration-700 ease-out group-hover:scale-110"
                       />
                     ) : (
                       <Package className="w-20 h-20 text-muted-foreground/40" />
