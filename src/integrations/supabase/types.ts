@@ -23,6 +23,7 @@ export type Database = {
           customer_note: string | null
           id: string
           order_code: string | null
+          package_name: string | null
           price: number
           product_id: string
           product_name: string
@@ -39,6 +40,7 @@ export type Database = {
           customer_note?: string | null
           id?: string
           order_code?: string | null
+          package_name?: string | null
           price: number
           product_id: string
           product_name: string
@@ -55,6 +57,7 @@ export type Database = {
           customer_note?: string | null
           id?: string
           order_code?: string | null
+          package_name?: string | null
           price?: number
           product_id?: string
           product_name?: string
@@ -269,6 +272,7 @@ export type Database = {
       products: {
         Row: {
           account_info: string | null
+          boost_packages: Json
           category: string
           created_at: string
           description: string | null
@@ -283,6 +287,7 @@ export type Database = {
         }
         Insert: {
           account_info?: string | null
+          boost_packages?: Json
           category?: string
           created_at?: string
           description?: string | null
@@ -297,6 +302,7 @@ export type Database = {
         }
         Update: {
           account_info?: string | null
+          boost_packages?: Json
           category?: string
           created_at?: string
           description?: string | null
@@ -477,16 +483,28 @@ export type Database = {
         Args: { _category: string; _user_id: string }
         Returns: boolean
       }
-      purchase_boost: {
-        Args: {
-          p_note: string
-          p_password: string
-          p_product_id: string
-          p_user_id: string
-          p_username: string
-        }
-        Returns: Json
-      }
+      purchase_boost:
+        | {
+            Args: {
+              p_note: string
+              p_password: string
+              p_product_id: string
+              p_user_id: string
+              p_username: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_note: string
+              p_package_index?: number
+              p_password: string
+              p_product_id: string
+              p_user_id: string
+              p_username: string
+            }
+            Returns: Json
+          }
       purchase_product: {
         Args: { p_product_id: string; p_user_id: string }
         Returns: Json
