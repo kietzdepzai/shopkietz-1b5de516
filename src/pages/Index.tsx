@@ -93,16 +93,16 @@ const Index = () => {
                   style={{ animationDelay: `${idx * 60}ms` }}
                   className="group relative flex flex-col rounded-2xl overflow-hidden glass-panel neon-edge card-lift hover:-translate-y-1 hover:neon-edge-strong animate-fade-in-up"
                 >
-                  <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-muted/60 via-card to-background flex items-center justify-center">
+                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-muted/60 via-card to-background flex items-center justify-center">
                     <div className="pointer-events-none absolute inset-0 glow-orbs opacity-70" aria-hidden="true" />
                     {image ? (
                       <img
                         src={image}
                         alt={cat.name}
-                        className="relative w-3/4 h-3/4 object-contain transition-transform duration-700 ease-out group-hover:scale-110"
+                        className="relative w-1/2 h-1/2 object-contain transition-transform duration-700 ease-out group-hover:scale-110"
                       />
                     ) : (
-                      <Package className="w-20 h-20 text-muted-foreground/40" />
+                      <Package className="w-12 h-12 text-muted-foreground/40" />
                     )}
                     {stats && stats.count > 0 && (
                       <span className="absolute top-2 left-2 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wide badge-sale">

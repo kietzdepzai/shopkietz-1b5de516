@@ -70,7 +70,7 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) =
                 <button
                   key={cat.id}
                   onClick={() => onCategoryChange(cat.slug)}
-                  className={`group flex flex-col items-center justify-center gap-2 aspect-square rounded-xl border bg-card p-3 transition-all ${
+                  className={`group flex flex-col items-center justify-center gap-1 aspect-[4/3] rounded-xl border bg-card p-2 transition-all ${
                     isActive
                       ? "border-primary shadow-[0_6px_20px_hsl(var(--primary)/0.35)] -translate-y-0.5"
                       : "border-border hover:border-primary/60 hover:-translate-y-0.5 hover:shadow-md"
@@ -81,11 +81,11 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsProps) =
                       <img
                         src={cat.image_url}
                         alt={cat.name}
-                        className="max-h-10 sm:max-h-12 w-auto object-contain"
+                        className="max-h-8 sm:max-h-10 w-auto object-contain"
                         onError={(e) => { e.currentTarget.style.display = "none"; }}
                       />
                     ) : (
-                      <Package className={`w-10 h-10 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+                      <Package className={`w-8 h-8 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
                     )}
                   </div>
                   <span
