@@ -239,8 +239,44 @@ const AdminProducts = () => {
               <p className="text-xs text-muted-foreground mt-1">{accountLines.split("\n").filter(l => l.trim()).length} tài khoản sẽ được thêm vào kho</p>
             </div>
           ) : (
-            <div className="bg-accent/10 border border-accent/30 rounded-lg p-3 text-xs text-foreground">
-              <b>Cày thuê:</b> không cần nhập kho tài khoản. Khi khách đặt, hệ thống yêu cầu khách nhập TK/MK và lời nhắn — bạn xem & xử lý ở tab <b>Đơn cày thuê</b>.
+            <div className="space-y-3">
+              <div className="bg-accent/10 border border-accent/30 rounded-lg p-3 text-xs text-foreground">
+                <b>Cày thuê:</b> không cần nhập kho tài khoản. Khi khách đặt, hệ thống yêu cầu khách nhập TK/MK và lời nhắn — bạn xem & xử lý ở tab <b>Đơn cày thuê</b>.
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-foreground">
+                    Các gói dịch vụ cày thuê (khách chọn khi đặt, giá tính theo gói)
+                  </label>
+                  <button type="button"
+                    onClick={() => setBoostPackages([...boostPackages, { name: "", price: 0 }])}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-muted border border-border text-xs font-semibold hover:bg-border transition-colors">
+                    <Plus className="w-3.5 h-3.5" /> Thêm gói
+                  </button>
+                </div>
+                {boostPackages.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">Chưa có gói nào — nếu để trống, khách sẽ mua theo giá cố định phía trên.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {boostPackages.map((pkg, i) => (
+                      <div key={i} className="flex gap-2 items-center">
+                        <input value={pkg.name}
+                          onChange={(e) => setBoostPackages(boostPackages.map((p, idx) => idx === i ? { ...p, name: e.target.value } : p))}
+                          placeholder="VD: Cày 10K F"
+                          className="flex-1 bg-muted border border-border rounded-lg py-2 px-3 text-foreground focus:outline-none focus:border-primary text-sm" />
+                        <input type="number" value={pkg.price}
+                          onChange={(e) => setBoostPackages(boostPackages.map((p, idx) => idx === i ? { ...p, price: Number(e.target.value) } : p))}
+                          placeholder="Giá"
+                          className="w-32 bg-muted border border-border rounded-lg py-2 px-3 text-foreground focus:outline-none focus:border-primary text-sm" />
+                        <button type="button" onClick={() => setBoostPackages(boostPackages.filter((_, idx) => idx !== i))}
+                          className="p-2 rounded-lg text-destructive hover:bg-destructive/10 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
           <div className="flex gap-2">
