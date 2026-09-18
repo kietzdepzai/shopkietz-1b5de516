@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, CreditCard, Package, LayoutDashboard, LogOut, ChevronLeft, Gamepad2, ShoppingBag, FolderOpen, Tag, UserPlus, FileText, Rocket, Server, Music, Wrench } from "lucide-react";
+import { Users, CreditCard, Package, LayoutDashboard, LogOut, ChevronLeft, Gamepad2, ShoppingBag, FolderOpen, Tag, UserPlus, FileText, Rocket, Server, Music, Wrench, PanelsTopLeft } from "lucide-react";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminTopups from "@/components/admin/AdminTopups";
 import AdminProducts from "@/components/admin/AdminProducts";
@@ -16,8 +16,9 @@ import AdminBoostOrders from "@/components/admin/AdminBoostOrders";
 import AdminCardApiSettings from "@/components/admin/AdminCardApiSettings";
 import AdminMusic from "@/components/admin/AdminMusic";
 import AdminMaintenance from "@/components/admin/AdminMaintenance";
+import AdminAppearance from "@/components/admin/AdminAppearance";
 
-type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv" | "shop_settings" | "boost_orders" | "card_api" | "music" | "maintenance";
+type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv" | "shop_settings" | "boost_orders" | "card_api" | "music" | "maintenance" | "appearance";
 
 const Admin = () => {
   const { user, signOut, loading } = useAuth();
@@ -26,7 +27,7 @@ const Admin = () => {
   const [checking, setChecking] = useState(true);
   const [tab, setTab] = useState<Tab>(() => {
     const saved = localStorage.getItem("admin_tab");
-    return (saved && ["overview","users","topups","products","orders","categories","discounts","ctv","shop_settings","boost_orders","card_api","music","maintenance"].includes(saved)) ? saved as Tab : "overview";
+    return (saved && ["overview","users","topups","products","orders","categories","discounts","ctv","shop_settings","boost_orders","card_api","music","maintenance","appearance"].includes(saved)) ? saved as Tab : "overview";
   });
 
   useEffect(() => {
@@ -64,6 +65,7 @@ const Admin = () => {
     { id: "discounts" as Tab, name: "Mã giảm giá", icon: Tag },
     { id: "ctv" as Tab, name: "Cấp Quyền CTV", icon: UserPlus },
     { id: "shop_settings" as Tab, name: "Mô tả Shop", icon: FileText },
+    { id: "appearance" as Tab, name: "Giao diện", icon: PanelsTopLeft },
     { id: "music" as Tab, name: "Nhạc", icon: Music },
     { id: "maintenance" as Tab, name: "Bảo trì", icon: Wrench },
   ];
@@ -85,7 +87,7 @@ const Admin = () => {
         </button>
       </div>
 
-      <aside className={`bg-card/70 backdrop-blur border-r border-border md:flex md:flex-col md:sticky md:top-0 md:h-screen transition-all duration-300 ${sidebarOpen ? "flex flex-col w-full md:w-64" : "hidden md:flex md:w-[72px]"}`}>
+      <aside className={`min-w-0 bg-card/70 backdrop-blur border-r border-border md:flex md:flex-col md:sticky md:top-0 md:h-screen transition-all duration-300 ${sidebarOpen ? "flex flex-col w-full md:w-64" : "hidden md:flex md:w-[72px]"}`}>
         <div className="hidden md:flex p-4 border-b border-border items-center gap-2.5">
           <span className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shrink-0 shadow-lg">
             <Gamepad2 className="w-5 h-5 text-primary-foreground" />
@@ -100,19 +102,19 @@ const Admin = () => {
             <ChevronLeft className={`w-4 h-4 text-muted-foreground transition-transform ${!sidebarOpen ? "rotate-180" : ""}`} />
           </button>
         </div>
-        <nav className="flex-1 p-2 space-y-1 overflow-x-auto md:overflow-y-auto flex md:block gap-1">
+        <nav className="flex-1 p-2 space-y-1 overflow-y-auto overflow-x-hidden block">
           {sidebarOpen && <p className="hidden md:block px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quản lý</p>}
           {tabs.map((t) => (
             <button key={t.id} onClick={() => { setTab(t.id); if (window.innerWidth < 768) setSidebarOpen(false); }}
               title={t.name}
-              className={`group relative shrink-0 md:w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+              className={`group relative w-full min-w-0 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 tab === t.id
                   ? "gradient-primary text-primary-foreground shadow-md"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               } ${sidebarOpen ? "" : "md:justify-center"}`}>
               <t.icon className="w-5 h-5 shrink-0" />
-              <span className={sidebarOpen ? "inline" : "hidden md:hidden"}>{t.name}</span>
-              <span className="md:hidden">{t.name}</span>
+              <span className={`${sidebarOpen ? "inline" : "hidden md:hidden"} truncate`}>{t.name}</span>
+              <span className="md:hidden truncate">{t.name}</span>
             </button>
           ))}
         </nav>
@@ -125,8 +127,8 @@ const Admin = () => {
           </button>
         </div>
       </aside>
-      <main className="flex-1 p-3 sm:p-6 overflow-auto">
-        <div className="max-w-6xl mx-auto">
+      <main className="min-w-0 flex-1 p-3 sm:p-6 overflow-x-hidden overflow-y-auto">
+        <div className="w-full max-w-6xl mx-auto min-w-0">
           <div className="hidden md:flex items-center gap-2 mb-4 text-xs text-muted-foreground">
             <span>Admin</span>
             <span className="opacity-50">/</span>
@@ -143,6 +145,7 @@ const Admin = () => {
           {tab === "discounts" && <AdminDiscountCodes />}
           {tab === "ctv" && <AdminCTV />}
           {tab === "shop_settings" && <AdminShopSettings />}
+          {tab === "appearance" && <AdminAppearance />}
           {tab === "music" && <AdminMusic />}
           {tab === "maintenance" && <AdminMaintenance />}
         </div>
