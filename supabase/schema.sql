@@ -132,6 +132,7 @@ CREATE TABLE public.ctv_assignments (
 --   shop_title, shop_description, shop_logo_url, shop_hotline, shop_email,
 --   welcome_popup_enabled | _title | _content | _version,
 --   music_enabled, charge_card_api,
+--   shop_layout  -- 'cyber' | 'compact' | 'showcase': public storefront layout
 --   maintenance_enabled  -- 'true' | 'false': locks whole shop for non-admins
 --   maintenance_message  -- text shown on the maintenance screen
 
