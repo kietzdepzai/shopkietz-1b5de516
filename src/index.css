@@ -6,6 +6,14 @@
 @tailwind utilities;
 
 @layer base {
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   :root {
     --background: 210 40% 98%;
     --foreground: 215 28% 17%;
@@ -451,4 +459,88 @@
 .animate-marquee {
   display: inline-block;
   animation: marquee 12s linear infinite;
+}
+
+/* Admin-selected storefront layouts */
+.shop-layout {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  overflow-x: clip;
+}
+
+.shop-layout-compact .storefront-main {
+  max-width: 1536px;
+  gap: 1.25rem;
+}
+
+.shop-layout-compact .category-layout-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.shop-layout-compact .category-layout-grid > a > div:first-child {
+  aspect-ratio: 16 / 9;
+}
+
+.shop-layout-showcase .storefront-main {
+  max-width: 1180px;
+  gap: 2.5rem;
+}
+
+.shop-layout-showcase .category-layout-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.shop-layout-showcase .category-layout-grid > a:first-child {
+  grid-column: 1 / -1;
+}
+
+.shop-layout-showcase .category-layout-grid > a:first-child > div:first-child {
+  aspect-ratio: 21 / 8;
+}
+
+@media (max-width: 1023px) {
+  .shop-layout-compact .category-layout-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  *,
+  *::before,
+  *::after {
+    min-width: 0;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  .shop-layout .container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .shop-layout-compact .category-layout-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.625rem;
+  }
+
+  .shop-layout-showcase .category-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .shop-layout-showcase .category-layout-grid > a:first-child {
+    grid-column: auto;
+  }
+
+  .shop-layout-showcase .category-layout-grid > a:first-child > div:first-child {
+    aspect-ratio: 4 / 3;
+  }
 }

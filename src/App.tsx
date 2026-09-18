@@ -30,6 +30,7 @@ import KietzBadge from "./components/KietzBadge";
 import MusicPlayer from "./components/MusicPlayer";
 import PageLoader from "./components/PageLoader";
 import MaintenanceGate from "./components/MaintenanceGate";
+import { ShopLayoutProvider } from "./contexts/ShopLayoutContext";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
+        <ShopLayoutProvider>
         <Toaster />
         <Sonner />
         <ClickSparkle />
@@ -72,6 +74,7 @@ const App = () => (
           </Routes>
           </MaintenanceGate>
         </BrowserRouter>
+        </ShopLayoutProvider>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>

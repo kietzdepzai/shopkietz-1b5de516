@@ -13,6 +13,7 @@ import Footer from "@/components/Footer";
 import WelcomePopup from "@/components/WelcomePopup";
 import { supabase } from "@/integrations/supabase/client";
 import { Package, ArrowRight, Flame } from "lucide-react";
+import { useShopLayout } from "@/contexts/ShopLayoutContext";
 
 type Category = { id: string; name: string; slug: string; image_url: string | null; sort_order: number };
 type Product = { id: string; name: string; price: number; category: string; image_url: string | null };
@@ -23,6 +24,7 @@ const Index = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { layout } = useShopLayout();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +59,7 @@ const Index = () => {
       <WelcomePopup />
       <Header />
 
-      <main className="relative flex-1 container mx-auto px-4 py-6 space-y-8">
+      <main className={`storefront-main relative flex-1 container mx-auto px-4 py-6 space-y-8 storefront-${layout}`}>
 
         <Hero />
         <WelcomePanel />
@@ -77,7 +79,7 @@ const Index = () => {
         ) : categories.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">Chưa có danh mục nào.</div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <div className="category-layout-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {categories.map((cat, idx) => {
               const stats = catStats[cat.name];
               const image = cat.image_url || stats?.image || null;
