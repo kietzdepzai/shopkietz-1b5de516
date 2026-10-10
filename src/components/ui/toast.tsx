@@ -14,7 +14,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-4 left-1/2 z-[100] flex max-h-screen w-full -translate-x-1/2 flex-col gap-2 p-4 sm:top-4 sm:right-auto sm:bottom-auto sm:left-1/2 md:max-w-[420px]",
+      "shop-toast-viewport fixed top-4 left-1/2 z-[100] flex max-h-screen w-full -translate-x-1/2 flex-col gap-2 p-4 sm:top-4 sm:right-auto sm:bottom-auto sm:left-1/2 md:max-w-[420px]",
       className,
     )}
     {...props}
@@ -42,7 +42,7 @@ const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> & VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
-  return <ToastPrimitives.Root ref={ref} className={cn(toastVariants({ variant }), className)} {...props} />;
+  return <ToastPrimitives.Root ref={ref} className={cn("shop-toast", toastVariants({ variant }), className)} {...props} />;
 });
 Toast.displayName = ToastPrimitives.Root.displayName;
 

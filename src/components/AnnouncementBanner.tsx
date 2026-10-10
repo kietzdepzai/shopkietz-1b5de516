@@ -24,7 +24,7 @@ const AnnouncementBanner = () => {
   }, []);
 
   return (
-    <div className="relative overflow-hidden glass-panel neon-edge rounded-2xl p-6">
+    <div className="shop-announcement relative overflow-hidden glass-panel neon-edge rounded-2xl p-6">
       <div className="pointer-events-none absolute inset-0 glow-orbs" aria-hidden="true" />
       <div className="relative">
 

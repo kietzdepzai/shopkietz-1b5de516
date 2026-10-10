@@ -1,15 +1,26 @@
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, toast } from "sonner";
+import { useState, useEffect } from "react";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
 
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 768px)").matches);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 768px)");
+    const update = () => setIsMobile(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
-      position="top-center"
+      position={isMobile ? "bottom-center" : "top-center"}
+      closeButton
+      visibleToasts={isMobile ? 1 : 3}
       className="toaster group"
       icons={{
         success: "🌸",

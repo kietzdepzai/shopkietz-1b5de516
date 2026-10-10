@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Wallet, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface TopupEntry {
   user_id: string;
@@ -68,12 +67,12 @@ const RecentTopups = () => {
   if (topups.length === 0) return null;
 
   return (
-    <div className="bg-card border border-border rounded-xl neon-card h-full flex flex-col">
+    <div className="min-w-0 max-w-full bg-card border border-border rounded-xl neon-card h-full flex flex-col">
       <div className="flex items-center gap-2 p-4 pb-2">
         <Wallet className="w-4 h-4 text-accent" />
         <h2 className="font-display text-sm font-bold text-foreground">NẠP TIỀN GẦN ĐÂY</h2>
       </div>
-      <ScrollArea className="flex-1 px-4 pb-4" style={{ maxHeight: "280px" }}>
+      <div className="min-w-0 max-h-[280px] overflow-y-auto overflow-x-hidden px-4 pb-4">
         <div className="space-y-1.5">
           {topups.map((t, i) => (
             <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border/50">
@@ -92,7 +91,7 @@ const RecentTopups = () => {
             </div>
           ))}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };

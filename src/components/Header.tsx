@@ -99,10 +99,10 @@ const Header = () => {
   );
 
   return (
-    <header className="sticky top-0 z-50 glass-nav">
+    <header className="shop-header sticky top-0 z-50 glass-nav">
       {/* Top blue gradient bar */}
       <div className="brand-gradient text-white">
-        <div className="container mx-auto px-4 h-11 flex items-center justify-between">
+        <div className="header-utility container mx-auto px-4 min-h-11 flex flex-wrap items-center justify-between gap-1">
           <nav className="flex items-center gap-1 sm:gap-2 text-sm font-medium">
             <a href="/quy-dinh-nap-the" className="px-3 py-1.5 hover:bg-white/15 rounded-md transition-colors">Chính sách</a>
             <a href="/faq" className="px-3 py-1.5 hover:bg-white/15 rounded-md transition-colors">FAQ</a>
@@ -124,7 +124,7 @@ const Header = () => {
 
       {/* Middle row: logo, search, actions */}
       <div className="bg-background border-b border-border/50">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
+        <div className="header-main container mx-auto px-4 py-4 flex items-center gap-4">
           <a href="/" className="shrink-0">
             {logoUrl ? (
               <img
@@ -153,14 +153,14 @@ const Header = () => {
             </div>
           </form>
 
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="header-actions flex items-center gap-2 ml-auto">
             <button onClick={() => navigate("/lich-su-mua")} title="Đơn hàng" className="h-11 w-11 rounded-xl border border-border bg-card hover:bg-muted flex items-center justify-center transition-colors">
               <ShoppingCart className="w-5 h-5 text-foreground/70" />
             </button>
-            <button onClick={() => navigate("/trang-ca-nhan")} title="Yêu thích" className="h-11 w-11 rounded-xl border border-border bg-card hover:bg-muted flex items-center justify-center transition-colors">
+            <button onClick={() => navigate("/trang-ca-nhan")} title="Yêu thích" className="hidden sm:flex h-11 w-11 rounded-xl border border-border bg-card hover:bg-muted flex items-center justify-center transition-colors">
               <Heart className="w-5 h-5 text-foreground/70" />
             </button>
-            <a href="https://discord.gg/shopkietz" target="_blank" rel="noopener" title="Hỗ trợ" className="h-11 w-11 rounded-xl border border-border bg-card hover:bg-muted flex items-center justify-center transition-colors">
+            <a href="https://discord.gg/shopkietz" target="_blank" rel="noopener" title="Hỗ trợ" className="hidden sm:flex h-11 w-11 rounded-xl border border-border bg-card hover:bg-muted flex items-center justify-center transition-colors">
               <MessageCircle className="w-5 h-5 text-foreground/70" />
             </a>
 
