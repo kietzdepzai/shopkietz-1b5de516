@@ -617,7 +617,7 @@
   .shop-dialog h2 { padding-inline: 1rem; font-size: 1rem; line-height: 1.4; }
   .shop-dialog p { font-size: 0.8125rem; line-height: 1.5; }
 
-  .welcome-popup-overlay { padding: 0; }
+  .welcome-popup-overlay { padding: 0; z-index: 10000; }
   .welcome-popup-header { padding: 0.5rem 0.875rem; }
   .welcome-popup-header h3 { font-size: 1rem; line-height: 1.4; }
   .welcome-popup-header svg { flex-shrink: 0; }
@@ -653,7 +653,7 @@
     max-width: 26.25rem !important;
     padding: 0 !important;
     transform: translateX(-50%) !important;
-    z-index: 110;
+    z-index: 10001;
   }
 
   .shop-toast,
