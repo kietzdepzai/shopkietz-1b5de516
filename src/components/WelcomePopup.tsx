@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Bell, X, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const WelcomePopup = () => {
   const [open, setOpen] = useState(false);
@@ -37,25 +38,25 @@ const WelcomePopup = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={close}>
-      <div className="bg-card border border-border rounded-xl w-full max-w-lg shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <h3 className="font-display text-lg font-bold text-foreground flex items-center gap-2">
+    <div className="welcome-popup-overlay fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm p-4" onClick={close}>
+      <div role="dialog" aria-modal="true" aria-labelledby="welcome-popup-title" className="welcome-popup bg-card border border-border rounded-xl w-full max-w-lg shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="welcome-popup-header flex items-center justify-between gap-2 px-5 py-4 border-b border-border">
+          <h3 id="welcome-popup-title" className="min-w-0 font-display text-lg font-bold text-foreground flex items-center gap-2">
             <Bell className="w-5 h-5 text-primary" /> {title}
           </h3>
-          <button onClick={close} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
+          <Button onClick={close} variant="ghost" size="icon" aria-label="Đóng thông báo" className="shrink-0 text-muted-foreground"><X className="w-5 h-5" /></Button>
         </div>
-        <div className="px-5 py-4 text-sm text-foreground leading-relaxed max-h-[60vh] overflow-y-auto"
+        <div className="welcome-popup-content px-5 py-4 text-sm text-foreground leading-relaxed max-h-[60vh] overflow-y-auto"
              dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, "<br/>") }} />
-        <div className="flex flex-wrap justify-end gap-2 px-5 py-3 border-t border-border">
-          <button onClick={dontShow}
+        <div className="welcome-popup-actions flex flex-wrap justify-end gap-2 px-5 py-3 border-t border-border">
+          <Button onClick={dontShow}
             className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90">
             <EyeOff className="w-4 h-4" /> Không hiển thị lại
-          </button>
-          <button onClick={close}
+          </Button>
+          <Button variant="destructive" onClick={close}
             className="flex items-center gap-1.5 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg text-sm font-semibold hover:opacity-90">
             <X className="w-4 h-4" /> Đóng
-          </button>
+          </Button>
         </div>
       </div>
     </div>
