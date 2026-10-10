@@ -628,7 +628,7 @@
     overflow-wrap: anywhere;
   }
   .welcome-popup-content *,
-  .shop-announcement [dangerouslysetinnerhtml] {
+  .shop-announcement * {
     max-width: 100%;
   }
   .welcome-popup-content img { height: auto; }
