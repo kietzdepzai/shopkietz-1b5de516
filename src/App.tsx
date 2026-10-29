@@ -28,6 +28,7 @@ import ClickSparkle from "./components/ClickSparkle";
 import TopupNotifier from "./components/TopupNotifier";
 import KietzBadge from "./components/KietzBadge";
 import MusicPlayer from "./components/MusicPlayer";
+import AiChatWidget from "./components/AiChatWidget";
 import PageLoader from "./components/PageLoader";
 import MaintenanceGate from "./components/MaintenanceGate";
 import { ShopLayoutProvider } from "./contexts/ShopLayoutContext";
@@ -45,6 +46,7 @@ const App = () => (
         <TopupNotifier />
         <KietzBadge />
         <MusicPlayer />
+        <AiChatWidget />
         <BrowserRouter>
           <PageLoader />
           <MaintenanceGate>
