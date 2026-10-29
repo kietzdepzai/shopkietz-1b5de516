@@ -147,6 +147,12 @@ CREATE TABLE public.music_tracks (
   created_at   timestamptz NOT NULL DEFAULT now()
 );
 
+-- ---------- chat_messages ----------
+-- One persistent AI chat thread per user (Kietz AI assistant).
+-- user_id references auth.users(id) ON DELETE CASCADE.
+-- RLS: users can SELECT/INSERT only their own rows (user_id = auth.uid()).
+-- Written by the client and by the ai-chat edge function (service role).
+
 -- ============================================================
 -- RPC functions (see supabase/migrations for definitions):
 --   has_role, handle_new_user, update_updated_at_column,
