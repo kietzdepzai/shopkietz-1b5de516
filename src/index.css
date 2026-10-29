@@ -690,3 +690,30 @@
     color: inherit;
   }
 }
+
+/* ===== Kietz AI chat widget ===== */
+.kietz-chat-fab {
+  position: fixed;
+  bottom: 7.5rem;
+  right: 1rem;
+  z-index: 9999;
+}
+
+.kietz-chat-panel {
+  position: fixed;
+  bottom: 8.5rem;
+  right: 1rem;
+  z-index: 9998;
+  width: min(24rem, calc(100vw - 2rem));
+  height: min(30rem, calc(100dvh - 11rem));
+}
+
+@media screen and (max-width: 768px) {
+  .kietz-chat-fab { bottom: 6.75rem; right: 0.75rem; }
+  .kietz-chat-panel {
+    bottom: 7.75rem;
+    right: 1rem;
+    width: calc(100vw - 2rem);
+    height: calc(100dvh - 10rem);
+  }
+}
