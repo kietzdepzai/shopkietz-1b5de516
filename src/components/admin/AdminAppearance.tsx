@@ -10,7 +10,7 @@ const layouts: Array<{
   name: string;
   description: string;
   icon: typeof LayoutGrid;
-  preview: "balanced" | "dense" | "feature";
+  preview: "balanced" | "dense" | "feature" | "catalog";
 }> = [
   {
     id: "cyber",
@@ -33,9 +33,16 @@ const layouts: Array<{
     icon: PanelsTopLeft,
     preview: "feature",
   },
+  {
+    id: "tokii-catalog",
+    name: "Toki Catalog",
+    description: "Danh sách sản phẩm gọn, xem nhanh giá và tình trạng hàng như mẫu tham khảo.",
+    icon: Rows3,
+    preview: "catalog",
+  },
 ];
 
-const LayoutPreview = ({ type }: { type: "balanced" | "dense" | "feature" }) => (
+const LayoutPreview = ({ type }: { type: "balanced" | "dense" | "feature" | "catalog" }) => (
   <div className="aspect-[16/9] w-full overflow-hidden rounded-md border border-border bg-background p-2" aria-hidden="true">
     <div className="mb-2 h-2 w-full rounded-sm bg-primary/70" />
     <div className="mb-2 h-7 w-full rounded-sm bg-muted" />
@@ -56,6 +63,18 @@ const LayoutPreview = ({ type }: { type: "balanced" | "dense" | "feature" }) => 
           <div className="h-[17px] rounded-sm bg-card" />
           <div className="h-[17px] rounded-sm bg-card" />
         </div>
+      </div>
+    )}
+    {type === "catalog" && (
+      <div className="grid grid-cols-3 gap-1">
+        {[0, 1, 2].map((item) => (
+          <div key={item} className="space-y-1 rounded-sm border border-border bg-card p-1">
+            <div className="h-1.5 w-3/4 rounded-sm bg-foreground/50" />
+            <div className="h-1 w-full rounded-sm bg-muted-foreground/30" />
+            <div className="h-1 w-1/2 rounded-sm bg-primary/60" />
+            <div className="h-2 rounded-sm bg-primary/20" />
+          </div>
+        ))}
       </div>
     )}
   </div>
@@ -91,7 +110,7 @@ const AdminAppearance = () => {
         <p className="mt-1 text-sm text-muted-foreground">Chọn một mẫu để áp dụng cho toàn bộ khách truy cập.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-4">
         {layouts.map((item) => {
           const active = layout === item.id;
           const Icon = item.icon;

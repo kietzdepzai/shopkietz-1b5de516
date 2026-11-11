@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type ShopLayout = "cyber" | "compact" | "showcase";
+export type ShopLayout = "cyber" | "compact" | "showcase" | "tokii-catalog";
 
 type ShopLayoutContextValue = {
   layout: ShopLayout;
@@ -16,7 +16,7 @@ const ShopLayoutContext = createContext<ShopLayoutContextValue>({
 });
 
 const isShopLayout = (value: string | undefined): value is ShopLayout =>
-  value === "cyber" || value === "compact" || value === "showcase";
+  value === "cyber" || value === "compact" || value === "showcase" || value === "tokii-catalog";
 
 export const ShopLayoutProvider = ({ children }: { children: ReactNode }) => {
   const [layout, setLayout] = useState<ShopLayout>("cyber");

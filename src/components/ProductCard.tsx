@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import PurchaseConfirmDialog from "./PurchaseConfirmDialog";
 import BoostPurchaseDialog, { BoostPackage } from "./BoostPurchaseDialog";
+import { useShopLayout } from "@/contexts/ShopLayoutContext";
 
 interface ProductCardProps {
   id?: string;
@@ -29,6 +30,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ id, name, price, numericPrice, stock, description, category, imageUrl, product_type }: ProductCardProps) => {
   const { user } = useAuth();
+  const { layout } = useShopLayout();
   const { toast } = useToast();
   const [buying, setBuying] = useState(false);
   const [showAccDialog, setShowAccDialog] = useState(false);
@@ -39,6 +41,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
   const [showBoost, setShowBoost] = useState(false);
   const [boostPackages, setBoostPackages] = useState<BoostPackage[]>([]);
   const isBoost = product_type === "boost";
+  const isCatalogLayout = layout === "tokii-catalog";
 
   useEffect(() => {
     if (!isBoost || !id || !showBoost) return;
@@ -109,10 +112,51 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
   return (
     <>
       <div
-        className={`group relative flex flex-col rounded-2xl overflow-hidden card-lift glass-panel neon-edge hover:-translate-y-1 hover:neon-edge-strong ${
-          isBoost ? "border-accent/40" : ""
-        }`}
+        className={isCatalogLayout
+          ? "catalog-product-card group relative flex min-w-0 flex-col"
+          : `group relative flex flex-col rounded-2xl overflow-hidden card-lift glass-panel neon-edge hover:-translate-y-1 hover:neon-edge-strong ${isBoost ? "border-accent/40" : ""}`}
       >
+        {isCatalogLayout ? (
+          <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-3.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className={`inline-flex max-w-[70%] items-center truncate rounded-sm px-2 py-1 text-[11px] font-bold ${isBoost ? "bg-accent/15 text-accent" : stock > 0 ? "bg-primary/15 text-primary" : "bg-destructive/15 text-destructive"}`}>
+                {isBoost ? "Nhận đơn" : stock > 0 ? `Còn hàng: ${stock}` : "Hết hàng"}
+              </span>
+              <span className="truncate text-[11px] font-semibold uppercase text-muted-foreground">{category}</span>
+            </div>
+            <h3 className="min-h-[2.75rem] text-sm font-bold leading-snug text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+              {name}
+            </h3>
+            <p className="min-h-[2.25rem] text-xs leading-relaxed text-muted-foreground line-clamp-2">
+              {tags.join(" · ") || "Xem thông tin và chi tiết sản phẩm"}
+            </p>
+            <div className="flex items-baseline justify-between gap-2 border-t border-border pt-2">
+              <span className="text-[11px] font-semibold uppercase text-muted-foreground">Giá bán</span>
+              <span className="text-base font-extrabold leading-none text-yellow-500">{user ? price : "Đăng nhập"}</span>
+            </div>
+            <div className="mt-auto grid grid-cols-2 gap-2 pt-1">
+              {id ? (
+                <Link to={`/san-pham/${id}`} className="catalog-card-secondary btn-ghost-neon flex min-h-9 items-center justify-center gap-1 rounded-md border border-border bg-muted/60 px-2 text-xs font-semibold text-foreground">
+                  <Eye className="h-3.5 w-3.5" /> Chi tiết
+                </Link>
+              ) : <span />}
+              {user ? (
+                <button
+                  onClick={() => isBoost ? setShowBoost(true) : setShowConfirm(true)}
+                  disabled={buying || (!isBoost && stock <= 0)}
+                  className="btn-sweep flex min-h-9 items-center justify-center gap-1 rounded-md px-2 text-xs font-bold text-primary-foreground disabled:opacity-50"
+                >
+                  {buying ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}
+                  {buying ? "..." : !isBoost && stock <= 0 ? "Hết hàng" : isBoost ? "Đặt cày" : "Mua ngay"}
+                </button>
+              ) : (
+                <Link to="/dang-nhap" className="btn-sweep flex min-h-9 items-center justify-center gap-1 rounded-md px-2 text-xs font-bold text-primary-foreground">
+                  <ShoppingCart className="h-3.5 w-3.5" /> Đăng nhập
+                </Link>
+              )}
+            </div>
+          </div>
+        ) : <>
         {/* decorative grid */}
         <div className="pointer-events-none absolute inset-0 micro-grid opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
 
@@ -208,6 +252,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
             )}
           </div>
         </div>
+        </>}
       </div>
 
 

@@ -502,6 +502,38 @@
   aspect-ratio: 21 / 8;
 }
 
+.shop-layout-tokii-catalog .storefront-main {
+  max-width: 1320px;
+}
+
+.shop-layout-tokii-catalog .catalog-category-links {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.35) transparent;
+}
+
+.shop-layout-tokii-catalog .catalog-product-card {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.375rem;
+  background: hsl(var(--card));
+  box-shadow: 0 2px 8px hsl(var(--foreground) / 0.06);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.shop-layout-tokii-catalog .catalog-product-card:hover {
+  border-color: hsl(var(--primary) / 0.65);
+  box-shadow: 0 5px 16px hsl(var(--primary) / 0.12);
+}
+
+.shop-layout-tokii-catalog .catalog-card-secondary:hover {
+  background: hsl(var(--muted));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shop-layout-tokii-catalog .catalog-product-card {
+    transition: none;
+  }
+}
+
 @media (max-width: 1023px) {
   .shop-layout-compact .category-layout-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
