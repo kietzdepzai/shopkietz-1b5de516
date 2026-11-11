@@ -14,9 +14,10 @@ import WelcomePopup from "@/components/WelcomePopup";
 import { supabase } from "@/integrations/supabase/client";
 import { Package, ArrowRight, Flame } from "lucide-react";
 import { useShopLayout } from "@/contexts/ShopLayoutContext";
+import ProductCard from "@/components/ProductCard";
 
 type Category = { id: string; name: string; slug: string; image_url: string | null; sort_order: number };
-type Product = { id: string; name: string; price: number; category: string; image_url: string | null };
+type Product = { id: string; name: string; price: number; category: string; image_url: string | null; stock: number; description: string | null; product_type?: string };
 
 const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
 
@@ -29,7 +30,7 @@ const Index = () => {
   useEffect(() => {
     const fetchData = async () => {
       const [prodRes, catRes] = await Promise.all([
-        supabase.from("products").select("id, name, price, category, image_url").eq("status", "active"),
+        supabase.from("products").select("id, name, price, category, image_url, stock, description, product_type").eq("status", "active"),
         supabase.from("categories").select("*").order("sort_order"),
       ]);
       setProducts((prodRes.data as Product[]) || []);
@@ -68,13 +69,46 @@ const Index = () => {
         <div id="danh-muc" className="flex items-center justify-between gap-3 scroll-mt-24">
           <div className="flex items-center gap-2">
             <Flame className="w-5 h-5 text-primary" />
-            <h2 className="font-display text-xl sm:text-2xl font-extrabold text-foreground">Danh mục sản phẩm</h2>
+            <h2 className="font-display text-xl sm:text-2xl font-extrabold text-foreground">{layout === "tokii-catalog" ? "Sản phẩm đang mở bán" : "Danh mục sản phẩm"}</h2>
           </div>
-          <p className="text-sm text-muted-foreground">Chọn danh mục để xem sản phẩm</p>
+          <p className="text-sm text-muted-foreground">{layout === "tokii-catalog" ? `${products.length} sản phẩm` : "Chọn danh mục để xem sản phẩm"}</p>
         </div>
 
 
-        {loading ? (
+        {layout === "tokii-catalog" ? (
+          <>
+            <nav aria-label="Danh mục sản phẩm" className="catalog-category-links flex gap-2 overflow-x-auto pb-1">
+              {categories.map((cat) => (
+                <Link key={cat.id} to={`/danh-muc/${cat.slug}`} className="inline-flex shrink-0 items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs font-bold text-foreground transition-colors hover:border-primary hover:text-primary">
+                  {cat.image_url && <img src={cat.image_url} alt="" className="h-5 w-5 object-contain" />}
+                  {cat.name}
+                </Link>
+              ))}
+            </nav>
+            {loading ? (
+              <ProductCardSkeleton count={8} />
+            ) : products.length === 0 ? (
+              <div className="py-16 text-center text-muted-foreground">Chưa có sản phẩm nào.</div>
+            ) : (
+              <div className="catalog-product-grid grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    id={product.id}
+                    name={product.name}
+                    price={formatVND(product.price)}
+                    numericPrice={product.price}
+                    stock={product.stock}
+                    description={product.description || ""}
+                    category={product.category}
+                    imageUrl={product.image_url || undefined}
+                    product_type={product.product_type}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        ) : loading ? (
           <ProductCardSkeleton count={8} />
         ) : categories.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">Chưa có danh mục nào.</div>
@@ -131,7 +165,7 @@ const Index = () => {
         )}
 
 
-        <BestSellers />
+        {layout !== "tokii-catalog" && <BestSellers />}
 
         <div className="grid md:grid-cols-2 gap-6">
 
