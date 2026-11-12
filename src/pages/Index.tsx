@@ -55,6 +55,7 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-background flex flex-col">
+      <div className="pointer-events-none fixed inset-0 interactive-pointer-glow" aria-hidden="true" />
       <div className="pointer-events-none fixed inset-0 micro-grid opacity-40" aria-hidden="true" />
       <div className="pointer-events-none fixed inset-0 glow-orbs" aria-hidden="true" />
       <WelcomePopup />

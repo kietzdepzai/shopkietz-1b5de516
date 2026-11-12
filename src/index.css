@@ -282,6 +282,13 @@
       linear-gradient(hsl(var(--foreground) / 0.045) 1px, transparent 1px),
       linear-gradient(90deg, hsl(var(--foreground) / 0.045) 1px, transparent 1px);
     background-size: 28px 28px;
+    transform: translate3d(calc(var(--bg-shift-x, 0px) * -0.65), calc(var(--bg-shift-y, 0px) * -0.65), 0);
+    transition: transform 180ms ease-out;
+    will-change: transform;
+  }
+
+  .interactive-pointer-glow {
+    background: radial-gradient(28rem circle at var(--pointer-x, 50%) var(--pointer-y, 45%), hsl(var(--primary) / 0.10), transparent 75%);
   }
   /* Soft glowing radial orbs */
   .glow-orbs {
@@ -529,6 +536,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .micro-grid {
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+  .interactive-pointer-glow {
+    display: none;
+  }
   .shop-layout-tokii-catalog .catalog-product-card {
     transition: none;
   }
