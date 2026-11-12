@@ -33,10 +33,12 @@ const MusicPlayer = () => {
       const list: Track[] = [];
       for (const t of (rows ?? []) as Track[]) {
         if (t.storage_path) {
-          const { data: signed } = await supabase.storage
-            .from("music")
-            .createSignedUrl(t.storage_path, 60 * 60 * 6);
-          if (signed?.signedUrl) list.push({ ...t, url: signed.signedUrl });
+          const { data: signed, error } = await supabase.functions.invoke("music-url", {
+            body: { storage_path: t.storage_path },
+          });
+          if (!error && typeof signed?.signedUrl === "string") {
+            list.push({ ...t, url: signed.signedUrl });
+          }
         } else if (t.url) {
           list.push(t);
         }

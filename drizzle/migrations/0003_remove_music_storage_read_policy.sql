@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Admins can read music files" ON storage.objects;

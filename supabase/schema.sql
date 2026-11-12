@@ -165,9 +165,10 @@ CREATE TABLE public.music_tracks (
 --   products: CTV policies (select/insert/update/delete) are scoped with
 --     is_ctv_for_category(auth.uid(), category) so a collaborator can only
 --     touch products inside their assigned categories.
---   storage.objects (bucket 'music'): bucket stays PRIVATE; public SELECT is
---     limited to objects referenced by public.music_tracks.storage_path,
---     admins keep insert/delete.
+--   storage.objects (bucket 'music'): bucket stays PRIVATE with no direct
+--     SELECT policy. Playback uses the music-url edge function, which signs
+--     active playlist files only while shop music is enabled; admins may also
+--     preview inactive playlist entries.
 --   purchase_product, purchase_product_batch,
 --   purchase_boost, cancel_boost_order
 -- ============================================================

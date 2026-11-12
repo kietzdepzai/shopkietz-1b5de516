@@ -15,6 +15,20 @@
       "when": 1794294966500,
       "tag": "0001_fulfillment_order_status_flow",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794493082892,
+      "tag": "0002_restrict_music_storage_reads",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794493202388,
+      "tag": "0003_remove_music_storage_read_policy",
+      "breakpoints": true
     }
   ]
 }

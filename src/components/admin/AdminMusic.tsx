@@ -126,8 +126,10 @@ const AdminMusic = () => {
     }
     let src = t.url;
     if (t.storage_path) {
-      const { data } = await supabase.storage.from("music").createSignedUrl(t.storage_path, 3600);
-      src = data?.signedUrl || "";
+      const { data, error } = await supabase.functions.invoke("music-url", {
+        body: { storage_path: t.storage_path },
+      });
+      src = !error && typeof data?.signedUrl === "string" ? data.signedUrl : "";
     }
     if (!src) return;
     if (audioRef.current) {
