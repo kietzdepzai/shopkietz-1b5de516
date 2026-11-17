@@ -113,8 +113,8 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
     <>
       <div
         className={isCatalogLayout
-          ? "catalog-product-card group relative flex min-w-0 flex-col"
-          : `group relative flex flex-col rounded-2xl overflow-hidden card-lift glass-panel neon-edge hover:-translate-y-1 hover:neon-edge-strong ${isBoost ? "border-accent/40" : ""}`}
+          ? "catalog-product-card shop-card-motion group relative flex min-w-0 flex-col"
+          : `shop-card-motion group relative flex flex-col rounded-2xl overflow-hidden card-lift glass-panel neon-edge hover:-translate-y-1 hover:neon-edge-strong ${isBoost ? "border-accent/40" : ""}`}
       >
         {isCatalogLayout ? (
           <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-3.5">
