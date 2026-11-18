@@ -4,7 +4,6 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import WelcomePanel from "@/components/WelcomePanel";
 import TopUpGuide from "@/components/TopUpGuide";
-import BestSellers from "@/components/BestSellers";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import RecentPurchases from "@/components/RecentPurchases";
 import RecentTopups from "@/components/RecentTopups";
@@ -12,7 +11,7 @@ import RecentTopups from "@/components/RecentTopups";
 import Footer from "@/components/Footer";
 import WelcomePopup from "@/components/WelcomePopup";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ArrowRight, Flame } from "lucide-react";
+import { Package, ArrowRight } from "lucide-react";
 import { useShopLayout } from "@/contexts/ShopLayoutContext";
 import ProductCard from "@/components/ProductCard";
 
@@ -40,18 +39,12 @@ const Index = () => {
     fetchData();
   }, []);
 
-  // Build price range + representative image per category
-  const catStats = useMemo(() => {
-    const map: Record<string, { count: number; min: number; max: number; image: string | null }> = {};
-    products.forEach((p) => {
-      const s = (map[p.category] ||= { count: 0, min: p.price, max: p.price, image: p.image_url });
-      s.count += 1;
-      if (p.price < s.min) s.min = p.price;
-      if (p.price > s.max) s.max = p.price;
-      if (!s.image && p.image_url) s.image = p.image_url;
-    });
-    return map;
-  }, [products]);
+  const categoryGroups = useMemo(() => categories
+    .map((category) => ({
+      category,
+      products: products.filter((product) => product.category === category.name),
+    }))
+    .filter((group) => group.products.length > 0), [categories, products]);
 
   return (
     <div className="relative min-h-screen bg-background flex flex-col">
@@ -66,107 +59,61 @@ const Index = () => {
         <Hero />
         <WelcomePanel />
 
-        {/* Section header */}
         <div id="danh-muc" className="flex items-center justify-between gap-3 scroll-mt-24">
-          <div className="flex items-center gap-2">
-            <Flame className="w-5 h-5 text-primary" />
-            <h2 className="font-display text-xl sm:text-2xl font-extrabold text-foreground">{layout === "tokii-catalog" ? "Sản phẩm đang mở bán" : "Danh mục sản phẩm"}</h2>
+          <div>
+            <h2 className="font-display text-xl sm:text-2xl font-extrabold text-foreground">Sản phẩm theo danh mục</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Chọn nhanh sản phẩm trong từng nhóm</p>
           </div>
-          <p className="text-sm text-muted-foreground">{layout === "tokii-catalog" ? `${products.length} sản phẩm` : "Chọn danh mục để xem sản phẩm"}</p>
+          <p className="shrink-0 text-sm text-muted-foreground">{products.length} sản phẩm</p>
         </div>
 
-
-        {layout === "tokii-catalog" ? (
-          <>
-            <nav aria-label="Danh mục sản phẩm" className="catalog-category-links flex gap-2 overflow-x-auto pb-1">
-              {categories.map((cat) => (
-                <Link key={cat.id} to={`/danh-muc/${cat.slug}`} className="inline-flex shrink-0 items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs font-bold text-foreground transition-colors hover:border-primary hover:text-primary">
-                  {cat.image_url && <img src={cat.image_url} alt="" className="h-5 w-5 object-contain" />}
-                  {cat.name}
-                </Link>
-              ))}
-            </nav>
-            {loading ? (
-              <ProductCardSkeleton count={8} />
-            ) : products.length === 0 ? (
-              <div className="py-16 text-center text-muted-foreground">Chưa có sản phẩm nào.</div>
-            ) : (
-              <div className="catalog-product-grid grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                {products.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    id={product.id}
-                    name={product.name}
-                    price={formatVND(product.price)}
-                    numericPrice={product.price}
-                    stock={product.stock}
-                    description={product.description || ""}
-                    category={product.category}
-                    imageUrl={product.image_url || undefined}
-                    product_type={product.product_type}
-                  />
-                ))}
-              </div>
-            )}
-          </>
-        ) : loading ? (
+        {loading ? (
           <ProductCardSkeleton count={8} />
-        ) : categories.length === 0 ? (
-          <div className="text-center py-16 text-muted-foreground">Chưa có danh mục nào.</div>
+        ) : categoryGroups.length === 0 ? (
+          <div className="text-center py-16 text-muted-foreground">Chưa có sản phẩm nào.</div>
         ) : (
-          <div className="category-layout-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {categories.map((cat, idx) => {
-              const stats = catStats[cat.name];
-              const image = cat.image_url || stats?.image || null;
-              const priceLabel = stats && stats.count > 0
-                ? stats.min === stats.max
-                  ? formatVND(stats.min)
-                  : `${formatVND(stats.min)} ~ ${formatVND(stats.max)}`
-                : "Chưa có sản phẩm";
-              return (
-                <Link
-                  key={cat.id}
-                  to={`/danh-muc/${cat.slug}`}
-                  style={{ animationDelay: `${idx * 60}ms` }}
-                  className="group relative flex flex-col rounded-2xl overflow-hidden glass-panel neon-edge card-lift hover:-translate-y-1 hover:neon-edge-strong animate-fade-in-up"
-                >
-                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-muted/60 via-card to-background flex items-center justify-center">
-                    <div className="pointer-events-none absolute inset-0 glow-orbs opacity-70" aria-hidden="true" />
-                    {image ? (
-                      <img
-                        src={image}
-                        alt={cat.name}
-                        className="relative w-3/4 h-3/4 object-contain transition-transform duration-700 ease-out group-hover:scale-110"
-                      />
-                    ) : (
-                      <Package className="w-20 h-20 text-muted-foreground/40" />
-                    )}
-                    {stats && stats.count > 0 && (
-                      <span className="absolute top-2 left-2 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wide badge-sale">
-                        {stats.count} sản phẩm
-                      </span>
-                    )}
-                  </div>
-                  <div className="relative flex flex-col flex-1 p-3 space-y-2">
-                    <h3 className="font-display text-sm leading-snug line-clamp-2 min-h-[2.5rem] text-foreground group-hover:text-primary transition-colors uppercase">
-                      {cat.name}
-                    </h3>
-                    <div className="flex items-baseline justify-between pt-1 border-t border-primary/15">
-                      <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Giá</span>
-                      <span className="text-base font-extrabold text-yellow-500 leading-none">{priceLabel}</span>
+          <div className="space-y-8">
+            {categoryGroups.map(({ category, products: categoryProducts }) => (
+              <section key={category.id} className="category-product-group scroll-mt-24">
+                <div className="mb-3 flex items-center justify-between gap-3 border-b border-border pb-2">
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-md border border-primary/20 bg-card">
+                      {category.image_url ? (
+                        <img src={category.image_url} alt="" className="h-full w-full object-contain p-1" />
+                      ) : (
+                        <Package className="h-4 w-4 text-primary" />
+                      )}
                     </div>
-                    <div className="btn-sweep flex items-center justify-center gap-1.5 mt-1 px-3 py-2 rounded-lg text-primary-foreground text-xs font-bold">
-                      Xem sản phẩm <ArrowRight className="w-3.5 h-3.5" />
+                    <div className="min-w-0">
+                      <h3 className="truncate font-display text-base font-bold text-foreground sm:text-lg">{category.name}</h3>
+                      <p className="text-xs text-muted-foreground">{categoryProducts.length} sản phẩm</p>
                     </div>
                   </div>
-                </Link>
-              );
-            })}
+                  <Link to={`/danh-muc/${category.slug}`} className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-primary transition-colors hover:text-foreground sm:text-sm">
+                    Xem tất cả <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+                <div className="home-product-grid grid grid-cols-1 gap-2.5 min-[420px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {categoryProducts.slice(0, 4).map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      id={product.id}
+                      name={product.name}
+                      price={formatVND(product.price)}
+                      numericPrice={product.price}
+                      stock={product.stock}
+                      description={product.description || ""}
+                      category={product.category}
+                      imageUrl={product.image_url || undefined}
+                      product_type={product.product_type}
+                      compact
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
           </div>
         )}
-
-
-        {layout !== "tokii-catalog" && <BestSellers />}
 
         <div className="grid md:grid-cols-2 gap-6">
 

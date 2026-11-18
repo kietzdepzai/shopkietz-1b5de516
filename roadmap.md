@@ -16,3 +16,5 @@
 - [ ] Cập nhật schema.sql và kiểm tra luồng mua hàng, giao hàng.
 - [x] Thêm hiệu ứng nền tương tác nhẹ theo con trỏ và thao tác chạm.
 - [x] Thêm chuyển động vào/ánh sáng quét nhẹ khi rê chuột trên thẻ sản phẩm; tôn trọng giảm chuyển động.
+
+- [x] Thu gọn thẻ sản phẩm và gom sản phẩm cùng danh mục thành nhóm trên trang chủ.
