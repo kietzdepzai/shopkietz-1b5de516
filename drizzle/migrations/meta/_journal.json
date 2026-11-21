@@ -29,6 +29,13 @@
       "when": 1794493202388,
       "tag": "0003_remove_music_storage_read_policy",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795256897289,
+      "tag": "0004_restrict_public_catalog_metadata",
+      "breakpoints": true
     }
   ]
 }

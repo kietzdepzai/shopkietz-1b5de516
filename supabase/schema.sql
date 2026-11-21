@@ -162,9 +162,13 @@ CREATE TABLE public.music_tracks (
 --   is_active_ctv, is_ctv_for_category,
 --
 -- RLS notes:
+--   categories: visitors see categories only when active products exist;
+--     admins can see every category.
 --   products: CTV policies (select/insert/update/delete) are scoped with
 --     is_ctv_for_category(auth.uid(), category) so a collaborator can only
 --     touch products inside their assigned categories.
+--   music_tracks: visitors can see active playlist entries only; admins can
+--     manage all entries, including inactive previews.
 --   storage.objects (bucket 'music'): bucket stays PRIVATE with no direct
 --     SELECT policy. Playback uses the music-url edge function, which signs
 --     active playlist files only while shop music is enabled; admins may also
