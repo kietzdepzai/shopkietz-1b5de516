@@ -43,6 +43,13 @@
       "when": 1795257301381,
       "tag": "0005_lock_legacy_purchase_and_mask_public_feeds",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795257372195,
+      "tag": "0006_require_sign_in_for_purchases",
+      "breakpoints": true
     }
   ]
 }

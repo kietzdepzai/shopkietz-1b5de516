@@ -170,7 +170,8 @@ CREATE TABLE public.music_tracks (
 --   music_tracks: visitors can see active playlist entries only; admins can
 --     manage all entries, including inactive previews.
 --   purchase_product: legacy single-item purchase is unavailable to browser
---     roles; public activity RPCs return masked names and bounded result sets.
+--     roles; purchase batch/boost RPCs require sign-in and bind the caller to
+--     auth.uid(); public activity RPCs return masked names and bounded results.
 --   storage.objects (bucket 'music'): bucket stays PRIVATE with no direct
 --     SELECT policy. Playback uses the music-url edge function, which signs
 --     active playlist files only while shop music is enabled; admins may also
